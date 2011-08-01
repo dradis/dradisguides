@@ -1,0 +1,15 @@
+title: Dradis Framework Guides
+description: These guides are designed to help you make the most of the Dradis Framework.
+
+team_name: The People That Make It Happen
+authors:
+  Documentation Team:
+    - name: Daniel Martin
+      nick: etdsoft
+      image: credits/etdsoft.jpg
+      description: Daniel Martin is member of the Dradis Framework Core Team and founder of Security Roots Ltd. He blogs at <a href="http://usefulfor.com">usefulfor.com</a> and can be found on Twitter as <a href="http://twitter.com/etdsoft">@etdsoft</a>.
+index:
+  Advanced Guides:
+    - title: "Running Dradis on Apache"
+      url: dradis_on_apache
+      text: "Learn how to run Dradis behind Apache and mod_passenger."

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title><%= yield(:page_title) %></title>
+</head>
+<body class="guide">
+  <div>
+    <% if page_header = yield(:page_header).presence %>
+      <%= page_header %>
+    <% else %>
+      <a href="/"><img src="images/dradis/guides.png"></a>
+      <h2><a href="/"><%= Guides.meta["title"] %></a></h2>
+      <p><%= Guides.meta["description"] %></p>
+    <% end %>
+  </div>
+
+  <%= yield %>
+</body>
+</html>
