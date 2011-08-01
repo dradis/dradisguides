@@ -1,0 +1,8 @@
+.DS_Store
+.bundle
+bin
+output
+staging
+Gemfile.lock
+*.swp
+*.swo
