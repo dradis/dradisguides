@@ -13,4 +13,4 @@ http://guides.dradisframework.org/
 License
 -------
 
-This work is licensed under a (Creative Commons Attribution-Share Alike 3.0)[http://creativecommons.org/licenses/by-sa/3.0/] License
+This work is licensed under a [Creative Commons Attribution-Share Alike 3.0](http://creativecommons.org/licenses/by-sa/3.0/) License
