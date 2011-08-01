@@ -4,10 +4,11 @@ Dradis Framework Guides
 This repository contains guides and documentation for the open source Dradis 
 Framework (http://dradisframework.org).
 
-The guides are available through:
+The guides will be available through:
 
 http://guides.dradisframework.org/
 
+In the mean time, this is how you can contribute: [Contribute Guide](https://github.com/dradis/dradisguides/blob/master/source/contribute.textile)
 
 
 License
