@@ -1,15 +1,92 @@
 h2. Dradis on Apache
 
+After reading this guide, you will be able to:
+
+* Have Dradis running always-on behind Apache
+* Have an Apache environment able to run other Rails applications
+
+endprologue.
 
 h3. Prerequisites
 
+We are assuming a Linux environment although most of the guide will be applicable to other platforms.
+
+In order to run Dradis under Apache and <a href="http://www.modrails.com/">mod_rails</a>, we need to install Apache and the Passenger gem:
+<blockquote>
+# apt-get install apache2
+# gem install passenger
+</blockquote>
+
+You need to load Apache's SSL module:
+<blockquote>
+# a2enmod ssl
+</blockquote>
+
+And Passenger's Apache module:
+<blockquote>
+# passenger-install-apache2-module
+</blockquote>
+
+Passenger's install instructions are very thorough, but you can always check the <a href="http://www.modrails.com/documentation/Users%20guide.html">User's guide</a>.
+
+If you are running Debian lenny, you may need to update your Ruby gems installation:
+
+<blockquote>
+# gem install rubygems-update<br/>
+# /var/lib/gems/1.8/bin/update_rubygems
+</blockquote>
+
+Once you have Apache and mod_passenger running, the worst is over, you just need to configure a Dradis virtual host.
 
 h3. Get Dradis
 
+You can either <a href="download.html">download</a> the latest release or checkout the latest and greatest version from the <a href="subversion.html">subversion</a> repository.
+
+For the examples we will assume that Dradis is found in <code>/home/etd/dradis</code>
 
 h3. Reset the Dradis environment
 
+Passenger will run Dradis in <strong>production</strong> mode, so we need to make sure that the production database is properly configured. Go to the Dradis folder and first make sure you have all the required dependencies:
+
+<blockquote>
+$ ./verify.sh
+</blockquote>
+
+Install anything that is missing (the script provides instructions) and then initialize the environment with:
+
+<blockquote>
+$ ./reset.sh
+</blockquote>
+
+This will initialize the production SQLite3 database (~/dradis/server/db/production.sqlite3). You can use other engines like MySQLor Postgres. See the <a href="configure.html">configuration</a> page for more details on how to do this.
 
 h3. Configure Dradis VirtualHost
 
+Create a new <code>Dradis</code> file under <code>/etc/apache2/sites-available/</code>:
 
+<blockquote>
+&lt;VirtualHost _default_:443&gt; <br/>
+    &nbsp;&nbsp;SSLEngine on<br/>
+    &nbsp;&nbsp;SSLCertificateFile /home/etd/dradis/server/config/ssl/server.crt<br/>
+    &nbsp;&nbsp;SSLCertificateKeyFile /home/etd/dradis/server/config/ssl/server.key.insecure<br/>
+    <br/>
+    &nbsp;&nbsp;SSLProtocol all -SSLv2<br/>
+    &nbsp;&nbsp;ServerName dradis<br/>
+    &nbsp;&nbsp;DocumentRoot /home/etd/dradis/server/public<br/>
+&lt;/VirtualHost&gt;<br/>
+</blockquote>
+
+Save the file and enable the virtual host:
+
+<blockquote>
+# a2ensite dradis<br/>
+# /etc/init.d/apache2 reload<br/>
+</blockquote>
+
+Dradis should be ready to use at:
+
+<blockquote>
+https://localhost/
+</blockquote>
+
+If for some reason this doesn't work, remember to check out the logs in the <code>log/</code> folder in the directory you uncompressed Dradis and feel free to ask in the <a href="/community/">forums</a> or the <a href="mailing_lists.html">mailing list</a>.
