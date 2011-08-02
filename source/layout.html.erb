@@ -3,18 +3,85 @@
 <head>
   <meta charset="utf-8" />
   <title><%= yield(:page_title) %></title>
+
+  <!-- guides styles -->
+  <link rel="stylesheet" type="text/css" href="stylesheets/green.css" />
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- syntax highlighting styles -->
+  <link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/shThemeStrobeGuides.css" />  
 </head>
 <body class="guide">
-  <div>
-    <% if page_header = yield(:page_header).presence %>
-      <%= page_header %>
-    <% else %>
-      <a href="/"><img src="images/dradis/guides.png"></a>
-      <h2><a href="/"><%= Guides.meta["title"] %></a></h2>
-      <p><%= Guides.meta["description"] %></p>
-    <% end %>
+<div id="header">
+  <%# if page_header = yield(:page_header).presence %>
+    <%#= page_header %>
+  <%# else %>
+    <a href="/"><%= Guides.meta["title"] %></a>
+    <!-- <p><%#= Guides.meta["description"] %></p> -->
+  <%# end %>
+</div>
+<div id="logo"></div>
+
+
+<div id="wrapper">
+<!-- Needed for dropshadows -->
+<div style='background:url(../images/shadow_left.gif) top left repeat-y;'>
+<div style='background:url(../images/shadow_right.gif) top right repeat-y;'>
+
+  <div id="container">
+    <div class="greenbar"></div>
+
+    <div id="content">
+      <div id="breadcrums">
+        <ul>
+          <li><a href="/">home</a></li><li>dradis framework guides</li>
+        </ul>
+      </div>
+      <%= yield %>
+    </div>
+  </div>
+  <div id="sidebar">
+    <h3>Guides</h3>
+    <div class="right_articles"><a href="/dradis_on_apache.html">Running Dradis on Apache</a></div>
+    <div class="right_articles"><a href="/contribute.html">Contribute a new guide</a></div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
+    <div class="right_articles">&nbsp;</div>
   </div>
 
-  <%= yield %>
+  <div class="clearing">&nbsp;</div>
+  <div style='background:url(../images/shadow_bottom.gif) top left repeat-x;height: 7px; margin: 1ex 3px 0 4px;'></div>
+
+<!-- Needed for dropshadows -->
+</div>
+</div>
+
+</div>
+
+<div id="footer">
+  Sponsored by <a href="http://securityroots.com">Security Roots</a>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.6.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="javascripts/sproutGuides.js"></script>
+<script type="text/javascript" src="javascripts/syntaxhighlighter/shCore.js"></script>
+<script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushRuby.js"></script>
+<script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushJScript.js"></script>
+<script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushCss.js"></script>
+<script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushXml.js"></script>
+<script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushSql.js"></script>
+<script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
 </body>
 </html>
