@@ -9,6 +9,10 @@ authors:
       image: credits/etdsoft.jpg
       description: Daniel Martin is member of the Dradis Framework Core Team and founder of Security Roots Ltd. He blogs at <a href="http://usefulfor.com">usefulfor.com</a> and can be found on Twitter as <a href="http://twitter.com/etdsoft">@etdsoft</a>.
 index:
+  Reporting:
+    - title: "WordExport report templates"
+      url: word_reports
+      text: "Create your own custom report templates using Word"
   Advanced Guides:
     - title: "Running Dradis on Apache"
       url: dradis_on_apache

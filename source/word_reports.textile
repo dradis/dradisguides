@@ -1,0 +1,156 @@
+h2. WordExport report templates
+
+After reading this guide, you will be able to:
+
+* Create a customized Word template to use with Dradis
+
+endprologue.
+
+h3. Introduction
+
+The WordExport plugin lets you export the contents of your repository into a Word XML formatted document.
+
+In order for a note to appear in the exported report it will have to be assigned to the '<strong>WordExport ready</strong>' category although the name of the category can be adjusted through the <code>Configuration Manager</code> constant.
+
+In addition to this, the note's <code>Text</code> needs to be formatted in a particular way as discussed in the next section of this guide.
+
+Finally, you would need a template (although a default one is provided). A template is a specially formatted Word XML document that will be filled with the contents from the notes in your repository. 
+
+h3. Note Format
+
+The Framework lets you define your own fields, you can define as many fields as you want in your note's <code>Text</code> as long as you follow the right format.
+
+For this guide we are going to use: <code>Title</code>, <code>Risk</code>, <code>Description</code> and <code>Recommendation</code>:
+
+<img src="images/word_reports/note_fields.png" 
+      class="marquee" 
+      width="497" height="317"
+      title="The note format that must be used in Dradis"
+      alt="A screenshot showing the format that a note's text should follow in order for the framework to detect the dfields it consists of"/>
+
+h3. A Basic Template. Custom Document Properties
+
+In order for the WordExport plugin to properly fill in your template, you will need to create a set of Custom Document Properties in your Word template.
+
+Lets start with a new empty document. Go to the Advance Properties window. File -&gt; Prepare -&gt; Properties -&gt; Document Properties -&gt; Advanced Properties:
+
+<img src="images/word_reports/custom_document_properties.png" 
+      width="374" height="446"
+      title="The custom properties in the Word document must match the fields defined in the note"
+      alt="A screenshot showing the custom properties once they have been added to the Word document"/>
+</p>
+
+As you can see in the screenshot above, the set of Custom Properties must match the fields we defined in the <code>Text</code> of our note.
+
+The next thing you need to do is create the document layout that you want. Hopefully any combination will do the trick. For example we will have a <strong>Details</strong> section and <strong>Summary of Findings</strong> table:</p>
+
+<img src="images/word_reports/document_layout.png" 
+      class="marquee"
+      width="497" height="374"
+      alt="A screenshot showing a basic document layout"/>
+
+h3. Import the Dradis Framework Schema
+
+Before we can continue we need to import the <strong>Dradis</strong> Framework XML Schema (<a href="https://github.com/dradis/dradisframework/blob/3b00ecc0dfebb87805ed8299609a3a68a8af7388/vendor/plugins/word_export/dradisframework.xsd">dradisframework.xsd</a>) to our current document.
+
+
+The easiest way to do that is through the <code>Developer</code> tab in Word (File -&gt; Word Options -&gt; Popular -&gt; tick the '<em>Show Developer tab in the Ribbon</em>' check box).
+
+<img src="images/word_reports/developer_tab.png" 
+      class="marquee"
+      width="308" height="126"
+      title="The Developer tab has an XML section that we will be using"
+      alt="A screenshot showing Word's Ribbon menu, the Developer tab selected and the Schema option highlighted"/>
+
+[ <strong>Word 2003 note</strong>: To add the schema go to Tools -&gt; Templates and Add-Ins (<a href="images/word_reports/templates_and_add_ins.png">screenshot</a>). ]
+
+Go to the <code>Schema</code> option, then <code>Add Schema</code>, choose the downloaded copy of <code>dradisframework.xsd</code> (Note that this file is also provided with Dradis in <code>/server/vendor/plugins/word_export/dradisframework.xsd</code>).
+
+And fill in the rest of the details:
+
+<img src="images/word_reports/dradis_schema.png" 
+      class="marquee"
+      width="380" height="171"
+      title="The Schema Settings Word window"
+      alt="A screenshot showing the new schema's properties: URL, alias and file location"/>
+
+That would create a new schema in the list and you just need to click on it to associate it with your current document.
+
+Please note that you will only need to do this step once. When you are creating your second template, the schema would already be there and you would only need to associate it with the document.
+
+h3. Identify Sections
+
+If everything goes according to plan, that should have activated the <code>XML Structure</code> panel on the right-hand side of the window as shown in the screenshot (click to enlarge - <a href="images/word_reports/xml_panel_small_2003.png">Word 2003 screenshot</a></a>).
+
+<a href="images/word_reports/xml_panel.png">
+<img src="images/word_reports/xml_panel_small.png" 
+      class="marquee image"
+      width="221" height="479"
+      title="The XML panel"
+      alt="A screenshot showing the XML panel that displays both the structure and elements of the current schema associated with the document"/>
+</a>
+
+In the upper section of the panel you will see the XML structure of your document (more later). In the lower section you will see all the elements defined in the <code>dradisframework.xsd</code> schema which are:
+
+<ul style="margin-left: 225px;">
+  <li><strong>dradis-section</strong>: Used to delimit each section of the document.</li>
+  <li><strong>dradis-template</strong>: The plugin will repeat the section of the document that is enclosed between these tags for every Note in your reporting category.</li>
+  <li><strong>dradis-placeholder</strong>: Used internally by the plugin. You should not need to use this element.</li>
+</ul>
+
+What we need to do now is go through our document layout and apply these tags to the relevant sections.
+
+To do this, just select the text you want to apply the tag to and then click on the chosen element in the XML panel.
+
+Keep in mind that the plugin will only repeat the sections enclosed between <code>dradis-template</code> tags, so you can have introduction paragraphs, or other sub-sections inside the section that will not be repeated.
+
+In our simple example, the result should be similar to the one shown in the screenshot:
+
+<a href="images/word_reports/xml_layout.png">
+<img src="images/word_reports/xml_layout_small.png" 
+      class="marquee"
+      width="342" height="303"
+      title="The XML structure of the document once the tags are applied"
+      alt="A screenshot showing the template layout with the XML tags applied to the different sections"/>
+</a>
+
+h3. Insert the Document Fields
+
+The last thing we need to do with our template is indicate where the plugin needs to place the contents of the different fields of your notes.
+
+As already discussed we are going to use Document Custom Properties to do it, so we need to insert the relevant fields in the right locations of
+our template.
+
+To insert a field, select the text you want to replace (for instance we are going to use the <code>Title</code> field instead of the current <em>Issue Title</em>) and go to Insert -&gt; Quick Parts -&gt; Field...
+
+[ <strong>Word 2003 note</strong>: To insert a field, select the text you want to replace (for instance we are going to use the Title field instead of the current Issue Title) and go to Insert -&gt; Field... ]
+
+In the <code>Field names</code> list, choose <code>DocProperty</code> and in the <code>Property</code> list choose <code>Title</code>. Be careful because there will be two <code>Title</code> properties: the first one is Word's default property, the second one is the one we defined.
+
+<img src="images/word_reports/field_dialog.png" 
+      class="marquee"
+      width="431" height="357"
+      title="The insert Field dialog"
+      alt="A screenshot showing Word's insert field dialog. The DocProperty field name is choosen and the second Title entry is also selected"/>
+
+Repeat the process with every field in you note, replace the dummy text we used to create the <em>look and feel</em> of the template with you Custom Property fields.
+
+Once you have inserted the field, Word will swap your text with the default text you chose when you created the Custom Property. It will also highlight the field with a grey background when you click on it.The final result should look like the screenshot below.
+
+<a href="images/word_reports/layout_with_fields.png">
+<img src="images/word_reports/layout_with_fields_small.png" 
+      class="marquee"
+      width="322" height="193"
+      title="Fields are represented with a grey background when you click on them"
+      alt="A screenshot showing the template layout with Fields inserted where the contents of each note should go"/>
+</a>
+
+h3. Upload to the Server
+
+The final stage in this process. Save the document as a <code>Word 2003 XML document</code>. Use the filename <code>template.xml</code>.
+
+Go to your <strong>Dradis</strong> installation folder, backup the current template (<code>./server/vendor/plugins/word_export/template.xml</code>) and replace it with your new one.
+
+You don't need to restart the server in order for the plugin to pick up the new template!
+
+To get you started you can download the <a href="http://dradisframework.org/files/template.xml">sample template</a> we have created during this guide. There is also a new entry in the WordExport menu: <code>View template</code> that lets you inspect the current template used by the plugin.
