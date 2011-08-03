@@ -13,3 +13,6 @@ index:
     - title: "Running Dradis on Apache"
       url: dradis_on_apache
       text: "Learn how to run Dradis behind Apache and mod_passenger."
+    - title: "Running Dradis inside Metasploit's Cygwin"
+      url: dradis_on_cygwin
+      text: "Learn how to run Dradis in your existing Metasploit Cygwin installation."

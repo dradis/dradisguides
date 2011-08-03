@@ -1,0 +1,55 @@
+h2. Running Dradis inside Metasploit's Cygwin
+
+After reading this guide, you will be able to:
+
+* Run Dradis inside your existing Metasploit Cygwin installation.
+* Keep your Dradis installation updated with the latest committed to the repo.
+
+endprologue.
+
+If you already have <a href="http://www.metasploit.com">Metasploit</a> installed in your Windows environment, adding Dradis to it is quite easy.
+
+h3. Install the current development branch
+
+For this tutorial, we are going to use the latest version from Dradis' <a href="https://github.com/dradis/dradisframework">git</a> repository. 
+
+Metasploit's Cygwin environment already comes with all the dependencies needed to run Dradis, so getting it up and running will be very easy.
+
+You need to open the Cygwin shell and type a few instructions. It can be found in <code>C:\Program Files\Metasploit\Framework3\shell.bat</code>:
+
+<blockquote>
+$ cd /<br/>
+$ mkdir dradis-git<br/>
+$ cd dradis-git/<br />
+$ git clone https://github.com/dradis/dradisframework.git server<br/>
+</blockquote>
+
+Then download the verify, reset and start scripts to your dradis-git/ folder:
+
+<blockquote>
+$ wget https://raw.github.com/dradis/meta/master/verify.sh<br/>
+$ wget https://raw.github.com/dradis/meta/master/reset.sh<br/>
+$ wget https://raw.github.com/dradis/meta/master/start.sh<br/>
+$ chmod +x *.sh<br/>
+$ ./verify.sh<br/>
+// follow instructions / install dependencies<br/>
+$ ./reset.sh
+</blockquote>
+
+Once the environment is ready, you can start the server with:
+
+<blockquote>
+$ ./start.sh
+</blockquote>
+
+To keep your Dradis install up to date it is enough to run <code>git pull</code> every now and then inside the <code>server/</code> folder.</p>
+
+h3. Installing a released version of Dradis
+
+If instead of the latest development <code>master</code> you would rather use one of the released versions, go to the <a href="http://dradisframework.org/download.html">Download</a> page, get the latest package and uncompress it inside your Metasploit's root directory and run:
+
+<blockquote>
+$ ./verify.sh<br/>
+$ ./reset.sh<br/> 
+$ ./start.sh
+</blockquote>
