@@ -12,7 +12,6 @@
 
   <!-- syntax highlighting styles -->
   <link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
-  <link rel="stylesheet" type="text/css" href="stylesheets/shThemeStrobeGuides.css" />  
 </head>
 <body class="guide">
 <div id="header">
@@ -44,22 +43,12 @@
     </div>
   </div>
   <div id="sidebar">
-    <h3>Guides</h3>
-    <div class="right_articles"><a href="/dradis_on_apache.html">Running Dradis on Apache</a></div>
-    <h3>Contribute</h3>
-    <div class="right_articles"><a href="/contribute.html">Contribute a new guide</a></div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
-    <div class="right_articles">&nbsp;</div>
+    <% all_guides.each do |name, list| %>
+      <h3><%= name %></h3>
+      <% list.each do |guide| %>
+      <div class="right_articles"><%= guide_link(guide) %></div>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="clearing">&nbsp;</div>
