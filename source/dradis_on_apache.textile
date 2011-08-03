@@ -40,7 +40,7 @@ Once you have Apache and mod_passenger running, the worst is over, you just need
 
 h3. Get Dradis
 
-You can either <a href="download.html">download</a> the latest release or checkout the latest and greatest version from the <a href="subversion.html">subversion</a> repository.
+You can either <a href="http://dradisframework.org/download.html">download</a> the latest release or checkout the latest and greatest version from the <a href="http://dradisframework.org/subversion.html">subversion</a> repository.
 
 For the examples we will assume that Dradis is found in <code>/home/etd/dradis</code>
 
@@ -58,7 +58,7 @@ Install anything that is missing (the script provides instructions) and then ini
 $ ./reset.sh
 </blockquote>
 
-This will initialize the production SQLite3 database (~/dradis/server/db/production.sqlite3). You can use other engines like MySQLor Postgres. See the <a href="configure.html">configuration</a> page for more details on how to do this.
+This will initialize the production SQLite3 database (~/dradis/server/db/production.sqlite3). You can use other engines like MySQLor Postgres. See the <a href="http://dradisframework.org/configure.html">configuration</a> page for more details on how to do this.
 
 h3. Configure Dradis VirtualHost
 
@@ -89,4 +89,4 @@ Dradis should be ready to use at:
 https://localhost/
 </blockquote>
 
-If for some reason this doesn't work, remember to check out the logs in the <code>log/</code> folder in the directory you uncompressed Dradis and feel free to ask in the <a href="/community/">forums</a> or the <a href="mailing_lists.html">mailing list</a>.
+If for some reason this doesn't work, remember to check out the logs in the <code>log/</code> folder in the directory you uncompressed Dradis and feel free to ask in the <a href="http://dradisframework.org/community/">forums</a> or the <a href="http://dradisframework.org/mailing_lists.html">mailing list</a>.
