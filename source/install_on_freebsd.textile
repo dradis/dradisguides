@@ -1,0 +1,99 @@
+h2. Installing Dradis on FreeBSD
+
+This guide covers how to get the Dradis Framework up and running in FreeBSD.
+
+endprologue.
+
+h3. Prerequisites
+
+Before we start, these are the dependencies of the Dradis port:
+
+* *Build*: @ruby-1.8.7.248_5,1 ruby18-gems-1.3.7 rubygem-rake-0.8.7@
+* *Run*: @pkg-config-0.25_1 ruby-1.8.7.248_5,1 ruby18-gems-1.3.7 ruby18-wirble-0.1.3 rubygem-sqlite3-1.3.2 sqlite3-3.7.3_1 swig-1.3.39_1@
+
+
+h3. Updating your Ports Tree
+
+Update FreeBSD Ports Tree using @portsnap@ or @cvsup@, on this documentation we will be using @portsnap@:
+
+<shell>
+# portsnap fetch
+</shell>
+
+After @portsnap@ is done downloading the latest ports tree snapshot, you need to extract them:
+>
+<shell>
+# portsnap extract
+</shell>
+
+If everything goes according to plan, you should have the Dradis port in your system:
+
+<shell>
+# cd /usr/ports && make search name=dradis
+Port:   dradis-2.5.2
+Path:   /usr/ports/security/dradis
+Info:   Opensource framework to enable effective information gathering
+Maint:  semprix@bsdmail.org
+B-deps: ruby-1.8.7.248_5,1 ruby18-gems-1.3.7 rubygem-rake-0.8.7
+R-deps: pkg-config-0.25_1 ruby-1.8.7.248_5,1 ruby18-gems-1.3.7 ruby18-wirble-0.1.3 rubygem-sqlite3-1.3.2 sqlite3-3.7.3_1 swig-1.3.39_1
+WWW:    http://dradisframework.org/
+</shell>
+
+Once you have confirmed that Dradis is already on your ports tree directory, you are ready to build it.
+
+
+h3. Building Dradis
+
+The build process is straightforward: download the latest version of the framework available and uncompress in @/usr/local/dradis/@
+
+Remember that you should be *root* to build this port:
+
+<shell>
+# cd /usr/ports/security/dradis && make install clean
+===>  Vulnerability check disabled, database not found
+===>  License accepted by the user
+=> dradis-v2.5.2.tar.gz doesn't seem to exist in /usr/ports/distfiles/.
+=> Attempting to fetch from http://heanet.dl.sourceforge.net/project/dradis/dradis/v2.5.2/.
+dradis-v2.5.2.tar.gz                            3% of 4638 kB   67 kBps
+
+========================================
+
+ dradis uses SQLite as default database backend.
+
+  For other databases such as MySQL configure the file
+   /usr/local/dradis/server/config/database.yml
+
+  The (SQLite) database can be initialized with the command
+   */usr/local/etc/rc.d/dradis initdb*
+
+  For more information see:
+   http://dradisframework.org/configure.html
+
+========================================
+===> Installing rc.d startup script(s)
+===>   Registering installation for dradis-2.5.2
+===>  Cleaning for dradis-2.5.2
+#
+</shell>
+
+Everything should be ready by now. As the script tells you, if you want to use a different database engine, the "configure and launch":http://dradisframework.org/configure.html page has all the answers.
+
+
+h3. Running Dradis
+
+To start Dradis on boot-up edit @/etc/rc.conf@ and add:
+
+<plain filename="/etc/rc.conf">
+dradis_enable="YES"
+</plain>
+
+To start Dradis manually:
+
+<shell>
+# sh /usr/local/etc/rc.d/dradis start
+=> Booting WEBrick
+=> Rails 2.3.5 application starting on https://127.0.0.1:3004
+#
+</shell>
+
+And there we go, we compiled and started Dradis successfully :)
