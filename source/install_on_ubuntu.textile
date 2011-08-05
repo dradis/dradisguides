@@ -1,0 +1,136 @@
+h2. Installing Dradis on Ubuntu
+
+This guide covers how to get the Dradis Framework up and running in Ubuntu.
+
+endprologue.
+
+h3. Running on Ubuntu
+
+We are going to assume that either Ubuntu is your base OS or you are preparing an Ubuntu-base virtual machine.
+
+If the latter going for 10 GB of disk and 2 GB of RAM should do the trick. You can download Ubuntu from:
+
+"http://www.ubuntu.com/download/ubuntu/download":http://www.ubuntu.com/download/ubuntu/download
+
+A tutorial on how to install the base OS falls out of the scope of this guide, we will leave you a few minutes to get your new OS up and running.
+
+h3. Download Dradis
+
+We are going to download Dradis and let the built-in *verify.sh* guide us through the steps required to complete the setup.
+
+Lets create a folder in our home:
+
+<shell>
+etd@host:~$ cd
+etd@host:~$ mkdir dradis
+etd@host:~$ cd dradis
+</shell>
+
+First download the .tar.bz2 from the downloads page:
+
+"http://dradisframework.org/download.html":http://dradisframework.org/download.html
+
+And uncompress (say the latest version is vX.Y.Z):
+
+<shell>
+etd@host:~/dradis$ tar -xvvjf dradis-vX.Y.Z.tar.bz2
+</shell>
+
+After everything is extracted move to the dradis-X.Y folder and verify all the dependencies:
+
+<shell>
+etd@host:~/dradis$ cd dradis-X.Y/
+etd@host:~/dradis/dradis-X.Y$ ./verify.sh
+</shell>
+
+As you can see, there are a few missing dependencies, we will get them installed.
+
+
+h3. Install dependencies
+
+First we need a working installation of Ruby:
+
+<shell>
+$ sudo apt-get install ruby irb rdoc ruby-dev libopenssl-ruby 
+</shell>
+
+Next time you run *./verify.sh* you'll learn you need RubyGems too. 
+
+Since we are going to use SQLite3 as our backend database (others can be configured) and XML we are going to skip a few runs of *./verify.sh* and install some packages directly:
+
+<shell>
+$ sudo apt-get install rubygems libsqlite3-0 libsqlite3-dev libxml2-dev libxslt1-dev
+</shell>
+
+Next time we run *./verify.sh* it will ask us to install some Ruby gems. Lets do that:
+
+<shell>
+$ sudo gem install bundler sqlite3-ruby
+</shell>
+
+A final run of *./verify.sh* should confirm that we have installed all the required prerequisites:
+
+<shell>
+etd@host:~/dradis/dradis-X.Y$ ./verify.sh
+
+Looking for Ruby interpreter... found [ /usr/bin/ruby ].
+Checking for support to compile native extensions... found.
+Looking for RubyGems and the 'gem' command... found [ /usr/bin/gem ].
+Looking for the Ruby Bundler gem [bundler]... found [ v1.0.15 ].
+Looking for the Ruby Bundler binary...
+** locating using the PATH variable... NOT found
+** locating using RubyGems... found [ /var/lib/gems/1.8/bin/bundle ].
+Looking for the SQLite3 libraries... found.
+Looking for the SQLite3 ruby gem [sqlite3-ruby]... found [ v1.3.4 ].
+
+</shell>
+
+One last step, not required but nice to have is to include the gem's @bin/@ direactory in your @$PATH@.
+
+If you ever install a Ruby gem that ships with a binary (like Bundler or Rails), copies of those binaries will be placed in the @bin/@ directory of RubyGems. If you want to have this commands readily available, you can add this at the bottom of your *~/.bashrc* file:
+
+<shell>
+export PATH=/var/lib/gems/1.8/bin/:$PATH
+</shell>
+
+And reload the changes with:
+
+<shell>
+$ source ~/.bashrc
+</shell>
+
+Or just open a new terminal and the changes will be reloaded automatically.
+
+h3. Running Dradis
+
+Before you can start the server you need to run *./reset.sh* this will prepare the config files for first use and will re-generate the repository database. 
+
+<shell>
+etd@host:~/dradis/dradis-X.Y$ ./reset.sh
+</shell>
+
+If some of the required Ruby libraries are not installed, this script will show the list of them. You can go ahead and answer *y* to let the script run Bundler or you can run Bundler youself:
+
+<shell>
+etd@host:~/dradis/dradis-X.Y$ cd server/
+etd@host:~/dradis/dradis-X.Y/server$ bundle install
+</shell>
+
+Note that if you didn't add the RubyGems @bin/@ directory to your path you will have to use Bundler's full path: */var/lib/gems/1.8/bin/bundle*
+
+After your _bundle_  is installed (the list of gem dependencies), you can run *./reset.sh* to actually reset the environment:
+
+<shell>
+etd@host:~/dradis/dradis-X.Y$ ./reset.sh
+</shell>
+
+If you ever want to clear your repository (e.g. a new project begins), re-runing *./reset.sh* will do the trick.
+
+Once everything is ready, you can run the server with:
+
+<shell>
+etd@host:~/dradis/dradis-X.Y$ ./start.sh
+</shell>
+
+The script also accepts the *-h* flag to help you with additional arguments to customize the binding address and port number.
+
