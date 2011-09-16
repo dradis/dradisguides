@@ -20,6 +20,9 @@ index:
     - title: "Installing Dradis on FreeBSD"
       url: install_on_freebsd
       text: "Step-by-step guide to get Dradis running in the FreeBSD OS"
+    - title: "Installing Dradis on MacOS"
+      url: install_on_macos
+      text: "Step-by-step guide to get Dradis running in Mac OS"
   Reporting:
     - title: "WordExport report templates"
       url: word_reports

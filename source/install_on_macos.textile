@@ -1,0 +1,118 @@
+h2. Installing Dradis on MacOS
+
+This guide covers how to get the Dradis Framework up and running in MacOS.
+
+endprologue.
+
+h3. Prerequisites: Ruby 1.9.2
+
+We are going to be using Ruby 1.9.2. Mac OS comes with Ruby 1.8 so we will need to install and compile 1.9.
+
+The easiest way to manage multiple Ruby versions is through the "Ruby Version Manager":https://rvm.beginrescueend.com/ that you can install with:
+
+<shell>
+etd@host:~$ bash < <(curl -s https://rvm.beginrescueend.com/install/rvm)
+</shell>
+
+You need to add *rvm* to your path, open *~/.bashrc* and add this at the bottom:
+
+<shell>
+### RVM
+# This loads RVM into a shell session.
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+</shell>
+
+Remember to reload your config file by opening a new terminal window or running *source* in your current one:
+
+<shell>
+etd@host:~$ source ~/.bashrc
+</shell>
+
+Next, in order to be able to compile Ruby 1.9, we need to install XCode from:
+http://developer.apple.com/xcode/
+
+Now we are ready to install and configure Ruby 1.9.2:
+
+<shell>
+etd@host:~$ rvm install 1.9.2
+</shell>
+
+The next step is not required but is recommended. We are going to make 1.9.2 the default Ruby environment with:
+
+<shell>
+etd@host:~$ rvm --default 1.9.2
+</shell>
+
+If you decide not to do this, Ruby 1.8 will be the default and you will have to remember to run *rvm 1.9.2* before launching Dradis every time.
+
+h3. Download Dradis
+
+We are going to download Dradis and let the built-in *verify.sh* guide us through the steps required to complete the setup.
+
+Lets create a folder in our home:
+
+<shell>
+etd@host:~$ cd
+etd@host:~$ mkdir dradis
+etd@host:~$ cd dradis
+</shell>
+
+First download the .tar.bz2 from the downloads page:
+
+"http://dradisframework.org/download.html":http://dradisframework.org/download.html
+
+And uncompress (say the latest version is vX.Y.Z):
+
+<shell>
+etd@host:~/dradis$ tar -xvvjf dradis-vX.Y.Z.tar.bz2
+</shell>
+
+h3.  Verify dependencies
+
+After everything is extracted move to the dradis-X.Y folder and verify all the dependencies:
+
+<shell>
+etd@host:~/dradis$ cd dradis-X.Y/
+etd@host:~/dradis/dradis-X.Y$ ./verify.sh
+</shell>
+
+Chances are you are missing a few Ruby gems but we will use Bundler for that. Install it with:
+
+<shell>
+etd@host:~/dradis$ gem install bundler
+</shell>
+
+h3. Reset the environment
+
+The next thing we need to do is to reset the Dradis environment using *reset.sh*
+
+<shell>
+etd@host:~/dradis$ cd dradis-X.Y/
+etd@host:~/dradis/dradis-X.Y$ ./reset.sh
+</shell>
+
+If some of the required Ruby libraries are not installed, this script will show the list of them. You can go ahead and answer *y* to let the script run Bundler. Alternatively you can run Bundler yourself:
+
+<shell>
+etd@host:~/dradis/dradis-X.Y$ cd server/
+etd@host:~/dradis/dradis-X.Y/server$ bundle install
+</shell>
+
+Note that if you didn't add the RubyGems @bin/@ directory to your path you will have to use Bundler's full path: */Users/<user>/.rvm/gems/ruby-1.9.2-p180/bin/bundle*
+
+After your _bundle_  is installed, you can run *./reset.sh* to actually reset the environment:
+
+<shell>
+etd@host:~/dradis/dradis-X.Y$ ./reset.sh
+</shell>
+
+If you ever want to clear your repository (e.g. a new project begins), re-runing *./reset.sh* will do the trick.
+
+Once everything is ready, you can run the server with:
+
+<shell>
+etd@host:~/dradis/dradis-X.Y$ ./start.sh
+</shell>
+
+The script also accepts the *-h* flag to help you with additional arguments to customize the binding address and port number.
+
