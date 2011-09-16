@@ -109,7 +109,7 @@ Before you can start the server you need to run *./reset.sh* this will prepare t
 etd@host:~/dradis/dradis-X.Y$ ./reset.sh
 </shell>
 
-If some of the required Ruby libraries are not installed, this script will show the list of them. You can go ahead and answer *y* to let the script run Bundler or you can run Bundler youself:
+If some of the required Ruby libraries are not installed, this script will show the list of them. You can go ahead and answer *y* to let the script run Bundler or you can run Bundler yourself:
 
 <shell>
 etd@host:~/dradis/dradis-X.Y$ cd server/
