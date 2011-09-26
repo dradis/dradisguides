@@ -112,6 +112,23 @@ p {
 }
 */
 
+.clearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.clearfix {
+    display: inline-block;
+}
+* html .clearfix {
+    height: 1%;
+}
+.clearfix {
+    display: block;
+}
+
 /* 2)-=-=-=- Structure -=-=-=- */
 #header {
   color: #FCFEF4;
@@ -282,12 +299,21 @@ p {
   font-size: 0.5em;
 }
 
+#content div {
+  vertical-align: middle;
+}
+
 #content div.author p {
-    margin-left: 115px;
+  margin-left: 115px;
+}
+#content div.author h3 {
+  clear: none;
+  margin-left: 115px;
+  width: 735px;
 }
 
 #content p {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 .pic {
