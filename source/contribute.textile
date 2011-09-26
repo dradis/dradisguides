@@ -37,11 +37,13 @@ TIP: The -b switch is the branch name you are creating. When the time comes to p
 
 This will create a new branch for you to work on your new guide or to edit an existing guide. Next, you will need to get the +guides+ executable.
 
-h4. If You Use OSX or Windows and Aren't a Ruby Developer
+h3. Install the *guides* package
+
+*If You Use OSX or Windows and Aren't a Ruby Developer*
 
 The easiest way to get started with the guides is to download and install the "guides pkg":http://guides-pkg.strobeapp.com/Guides.pkg on OSX or the "guides exe":http://guides-pkg.strobeapp.com/Guides.exe on Windows. This will give you the +guides+ executable on your machine, and does not require you to have a C compiler on your computer.
 
-h4. If You're a Ruby Developer
+*If You're a Ruby Developer*
 
 To install the guides gem, just use:
 
@@ -54,21 +56,22 @@ h3. Create Your Guide
 
 Create a new guide +<your_guide_name>.textile+ in the +source+ directory.  Use the following template:
 
-<plain filename="source/&lt;your_guide_name&gt;.textile">
-h2. Guide Topic
+<plain>
+  h2. Guide Topic
 
-This guide covers ... After reading this guide, you will be able to:
+  This guide covers ... After reading this guide, you will be able to:
 
-* Make a list of the things you will cover.
-* This should be a relatively high level list.
-* It should cover what the reader will know how to do once done.
+  * Make a list of the things you will cover.
+  * This should be a relatively high level list.
+  * It should cover what the reader will know how to do once done.
 
-endprologue.
+  endprologue.
 
-h3. Topics Should Use h3
+  h3. Topics Should Use h3
 
-Each topic should use an h3.
+  Each topic should use an h3.
 </plain>
+
 
 To preview your guide as you write it, run the +guides preview+ command.
 
@@ -83,7 +86,7 @@ Go to +http://localhost:9292/<your_guide_name>.html+ in a browser. After making 
 
 If you do not see your changes, check the terminal window where you ran the +preview+ command for error messages.
 
-h4. Updating +guides.yml+
+h3. Updating +guides.yml+
 
 You will also want to update the main +guides.yml+ in the root of the repository with your new guide. First, decide which section your guide will go under. In general, new guides will go under the +Advanced Guides+ section.
 
