@@ -40,6 +40,12 @@
           <li><a href="http://dradisframework.org/">home</a></li><li>dradis framework guides</li>
         </ul>
       </div>
+      <% if header_section = yield(:header_section).presence %>
+        <div class="headerSection">
+          <%= header_section %>
+        </div>
+      <% end %>
+
       <%= yield %>
     </div>
   </div>
