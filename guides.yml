@@ -14,6 +14,9 @@ authors:
       description: tba
 index:
   Installation:
+    - title: "Installing Dradis on BackTrack"
+      url: install_on_backtrack
+      text: "Step-by-step guide to get the latest Dradis running on BackTrack"
     - title: "Installing Dradis on Ubuntu"
       url: install_on_ubuntu
       text: "Step-by-step guide to get Dradis running in the Ubuntu OS"

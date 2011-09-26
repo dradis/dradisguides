@@ -1,0 +1,74 @@
+h2. Installing Dradis on BackTrack
+
+This guide covers how to get the latest Dradis Framework up and running in BackTrack 5.
+
+We are going to clone the development repository of Dradis so you can be sure you are always running the latest and greatest.
+
+Please note that eventually we will fine tune the process of pushing the latest Dradis packages to the BT repositories in a timely manner. In the mean time, you can use this guide to stay on the bleeding edge.
+
+endprologue.
+
+h3. Clone the Dradis Framework repository
+
+Dradis is open-source and is hosted on GitHub: "github.com/dradis/dradisframework":https://github.com/dradis/dradisframework/ we are going to clone the repository to make sure we benefit of the latest features.
+
+<shell>
+root@root:~# cd /pentest/misc/
+root@root:/pentest/misc# mkdir dradis-git && cd dradis-git
+root@root:/pentest/misc/dradis-git# git clone https://github.com/dradis/dradisframework.git server
+</shell>
+
+h3. Get the helper scripts
+
+Dradis comes with a bunch of helper scripts to help you start and reset the environment. We need to grab a copy of those:
+
+<shell>
+root@root:/pentest/misc/dradis-git# wget https://raw.github.com/dradis/meta/master/verify.sh
+root@root:/pentest/misc/dradis-git# wget https://raw.github.com/dradis/meta/master/reset.sh
+root@root:/pentest/misc/dradis-git# wget https://raw.github.com/dradis/meta/master/start.sh
+root@root:/pentest/misc/dradis-git# wget https://raw.github.com/dradis/meta/master/LICENSE
+root@root:/pentest/misc/dradis-git# chmod +x *.sh
+</shell>
+
+The latest BackTrack comes with all the required libraries pre-installed, but you can double-check with:
+<shell>
+root@root:/pentest/misc/dradis-git# ./verify.sh
+</shell>
+
+It should give you an _all green_ status. We just need a few Ruby gems (i.e. libraries) that we can get with:
+
+<shell>
+root@root:/pentest/misc/dradis-git# cd server && bundle install 
+</shell>
+
+Before we are done we need a minor patch to the code (it will eventually be added to the repo). 
+
+Comment line #13 of [dradis-git]/server/config/environments/production.rb:
+
+<ruby>
+  
+  # Specifies the header that your server uses for sending files
+  # config.action_dispatch.x_sendfile_header = "X-Sendfile"
+
+</ruby>
+
+That's all done now, just reset the environment and start the server:
+<shell>
+root@root:/pentest/misc/dradis-git/server# cd ..
+root@root:/pentest/misc/dradis-git# ./reset.sh # Initialize the config
+root@root:/pentest/misc/dradis-git# ./start.sh
+</shell>
+
+All done now, enjoy your server at *https://127.0.0.1:3004*.
+
+The `start.sh` script also accepts the *-h* flag to help you with additional arguments to customize the binding address and port number.
+
+
+h3. Updating Dradis
+
+Once you have a local copy of the Dradis repository. Updating is just one instruction away:
+
+<shell>
+root@root:~# cd /pentest/misc/dradis-git/server
+root@root:/pentest/misc/dradis-git/server# git pull
+</shell>
