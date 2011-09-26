@@ -28,7 +28,7 @@ For this guide we are going to use: <code>Title</code>, <code>Risk</code>, <code
       title="The note format that must be used in Dradis"
       alt="A screenshot showing the format that a note's text should follow in order for the framework to detect the dfields it consists of"/>
 
-h3. A Basic Template. Custom Document Properties
+h3. A Basic Template
 
 In order for the WordExport plugin to properly fill in your template, you will need to create a set of Custom Document Properties in your Word template.
 
@@ -49,7 +49,7 @@ The next thing you need to do is create the document layout that you want. Hopef
       width="497" height="374"
       alt="A screenshot showing a basic document layout"/>
 
-h3. Import the Dradis Framework Schema
+h3. Import the Dradis Schema
 
 Before we can continue we need to import the <strong>Dradis</strong> Framework XML Schema (<a href="https://github.com/dradis/dradisframework/blob/3b00ecc0dfebb87805ed8299609a3a68a8af7388/vendor/plugins/word_export/dradisframework.xsd">dradisframework.xsd</a>) to our current document.
 
@@ -154,3 +154,9 @@ Go to your <strong>Dradis</strong> installation folder, backup the current templ
 You don't need to restart the server in order for the plugin to pick up the new template!
 
 To get you started you can download the <a href="http://dradisframework.org/files/template.xml">sample template</a> we have created during this guide. There is also a new entry in the WordExport menu: <code>View template</code> that lets you inspect the current template used by the plugin.
+
+h3. Need help with your reporting template?
+
+If you need help customizing your report templates, <a href="http://securityroots.com">Security Roots Ltd</a> offers a range of <a href="http://securityroots.com/dradis/">Dradis professional services</a> including *report customization*.
+
+You may also want to look into <a href="http://securityroots.com/dradispro/">Dradis Professional Edition</a>, the version of Dradis tailored to the needs of professional security companies with advanced reporting features.
