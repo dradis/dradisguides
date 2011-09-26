@@ -282,6 +282,23 @@ p {
   font-size: 0.5em;
 }
 
+#content div.author p {
+    margin-left: 115px;
+}
+
+#content p {
+    margin-bottom: 1em;
+}
+
+.pic {
+  margin: 0 2em 2em 0;
+}
+
+.left {
+  float: left;
+  margin-right: 1em;
+}
+
 /* 4) -=-=-=- Right selectors -=-=-=- */
 
 #dradispro img {
@@ -305,6 +322,37 @@ p {
   color: #78A515; 
   font-weight: bold;
   display: block;
+}
+
+#sidebar ul {
+  padding: 0;
+  list-style: none outside none;
+}
+#sidebar ol {
+  margin: 0;
+  padding: 0;
+}
+#sidebar ol.chapters {
+  list-style: decimal outside none;
+}
+#sidebar ol.chapters a {
+  font-weight: normal;
+  text-decoration: none;
+}
+#sidebar ol.chapters > li {
+  color: #000000;
+  font-size: 90%;
+  margin: 1.5ex 0 1.5ex 1.5ex;
+}
+#sidebar ol.chapters li ul {
+  margin-right: 0;
+}
+#sidebar ol.chapters li ul li {
+  background-position: 0 3px;
+  margin-left: 1em;
+}
+#sidebar ol.chapters li a p {
+  display: inline;
 }
 
 /* 8) Hacks - clearfix  -=-=-=- */
