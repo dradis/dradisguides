@@ -50,12 +50,21 @@
     </div>
   </div>
   <div id="sidebar">
-    <% all_guides.each do |name, list| %>
-      <h3><%= name %></h3>
-      <% list.each do |guide| %>
-      <div class="right_articles"><%= guide_link(guide) %></div>
-      <% end %>
+    <% if index_items = yield(:index_items).presence %>
+      <p><a href="/">Guides index</a></p>
+      <h3 class="chapter"><img src="images/strobe/chapters.png" alt="" />Chapters</h3>
+      <ol class="chapters">
+        <%= index_items %>
+      </ol>
+    <% else %>
+    <div id="subCol">
+      <%= yield(:sidebar) %>
+    </div>
     <% end %>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
   </div>
 
   <div class="clearing">&nbsp;</div>
