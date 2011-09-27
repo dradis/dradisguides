@@ -8,10 +8,10 @@ authors:
       nick: etdsoft
       image: credits/etdsoft.jpg
       description: Daniel Martin is member of the Dradis Framework Core Team and founder of Security Roots Ltd. He blogs at <a href="http://usefulfor.com">usefulfor.com</a> and can be found on Twitter as <a href="http://twitter.com/etdsoft">@etdsoft</a>.
-    - name: semprix
+    - name: Dax Labrador
       nick: semprix
       image: credits/semprix.jpg
-      description: tba
+      description: Dax Labrador is FreeBSD Ports maintainer, currently maintaining Dradis Framework and other security related ports, also the founder of <a href="http://www.rootcon.org">ROOTCON Hacker Conference</a> - premier hacker conference in the Philippines. You may follow him on Twitter <a href="http://twitter.com/semprix">@semprix</a>.
 index:
   Installation:
     - title: "Installing Dradis on BackTrack"
