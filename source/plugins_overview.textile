@@ -1,0 +1,74 @@
+h2. Server Plugins
+
+This guide explains what Dradis plugins are and the different types of plugins that can be created.
+
+endprologue.
+
+Dradis server plugins are standard "Ruby on Rails plugins":http://guides.rubyonrails.org/plugins.html with a twist.
+
+
+h3. Types of plugins
+
+There are three main types of plugins:
+
+* *Import*: Import plugins let the framework connect to external systems and import information from them. Examples: 
+** WikiMedia wiki
+** "Vuln::DB":http://securityroots.com/vulndb/, the vulnerability database
+
+* *Export*: Export the contents of the repository into different formats. Examples:
+** WordExport: generate a Word report. [ "read more":word_reports.html ]
+** Generate project export files (for backup or to re-use them in the future)
+** PDF format
+
+* *Upload*: Upload files to the server and parse their contents to add them to the repository. Examples:
+** Nmap upload
+** Nessus upload
+** Template / project upload (to restore the state of the project)
+
+h3. Generating Plugins
+
+
+To generate a plugin you can use one of the provided plugin generators.
+For example, to generate an Upload plugin that loads Nikto results, go 
+the server folder (<code>./dradis/server/</code>) and run:
+
+<shell>
+$ bundle exec rails generate upload_plugin nikto_upload
+</shell>
+
+That will generate all the required files to get the plugin up and 
+running. Remember that you will have to restart the server after adding a
+new plugin. There are generators for each plugin type: *import_plugin*,
+*export_plugin* and *upload_plugin*.
+</p>
+
+h3. Hooking into the Framework
+
+The structure created by the plugin generators is very similar with
+independence of the plugin type.
+
+This is because the only thing you really need to do in order to hook
+your plugin with the Framework is to create a module (for example 
+<code>NiktoUpload</code> and include it in one of the existing plugin
+modules. For example:
+
+<ruby>
+# This includes the import plugin module in the Dradis import plugin repository
+module Plugins
+  module Upload
+    include NiktoUpload
+  end
+end
+</ruby>
+
+This is done for you by the plugin generator. You just need to focus on 
+the code that controls your business login in your generated plugin 
+located at: <code>./vendor/plugins/nikto_upload/</code>.
+
+h3. More Information
+
+On the specific plugin types is available in:
+
+* "How to create an import plugin":plugins_import.html
+* How to create an upload plugin [coming soon]
+* How to create an export plugin [coming soon]
