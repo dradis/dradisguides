@@ -1,0 +1,91 @@
+h2. How to become a committer
+
+In this guide we explain the different types of commit access that exist in the
+Dradis project and how to become a Dradis committer.
+
+endprologue.
+
+
+There are two types of commit access: **full** and **partial**.
+
+**Full** means you can commit anywhere in the tree, **partial** means that
+changes can only be committed in that committer's specific area(s) of
+expertise.
+
+The processes Dradis uses to get commit access is copied/inspired from the one
+in Subversion community.
+
+h3. Contributing without being a committer
+
+Dradis is now hosted on GitHub ("dradis/dradisframework":https://github.com/dradis/dradisframework),
+this means that now it is easier than ever to contribute to the Dradis code base.
+
+If you want to contribute some code to the project:
+
+* Join the developer discussion at: "dradis-devel":https://lists.sourceforge.net/mailman/listinfo/dradis-devel
+* "Report a bug":https://github.com/dradis/dradisframework/issues
+* Submit a patch:
+** Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+** Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
+** Fork the project
+** Start a feature/bugfix branch (in your local copy)
+** Commit and push until you are happy with your contribution
+** Make sure to add tests for it. This is important so we don't break it in a future version unintentionally.
+** Send us a "pull request":http://help.github.com/pull-requests/
+
+"more info":https://github.com/dradis/dradisframework
+
+h3. How full commit access is granted
+
+After someone has successfully contributed a few non-trivial patches , 
+some full committer, usually whoever has reviewed and applied the most 
+patches from that contributor, proposes them for commit access.
+
+This proposal is sent only to the other full committers -- the ensuing 
+discussion is private, so that everyone can feel comfortable speaking their
+minds. Assuming there are no objections, the contributor is granted commit 
+access. The decision is made by consensus; there are no formal rules 
+governing the procedure, though generally if someone strongly objects the 
+access is not offered, or is offered on a provisional basis.
+
+_The primary criterion for full commit access is good judgment_.
+
+You do not have to be a technical wizard, or demonstrate deep knowledge of the
+entire codebase, to become a full committer. You just need to know what you
+don't know.
+
+If your patches adhere to the coding guidelines, adhere to all the usual
+unquantifiable rules of coding (code should be readable, robust, 
+maintainable, etc.), and respect the Hippocratic Principle of "first, do no
+harm", then you will probably get commit access pretty quickly. The size, 
+complexity, and quantity of your patches do not matter as much as the 
+degree of care you show in avoiding bugs and minimizing unnecessary impact 
+on the rest of the code.
+
+h3. How partial commit access is granted
+
+_A full committer sponsors the partial committer_. Usually this 
+means the full committer has applied several patches to the same area from 
+the proposed partial committer, and realizes things would be easier if the 
+person were just committing directly. _Approval is not required from 
+the full committers;_ it is assumed that sponsors know what they're 
+doing and will watch the partial committer's first few commits to make 
+sure everything's going smoothly.
+
+Patches submitted by a partial committer may be committed by that 
+committer even if they are outside that person's domain. This requires 
+approval (often expressed as a +1 vote) from at least one full committer. 
+In such a case, the approval should be noted in the log message, like so:
+
+<blockquote>Approved by: etd</blockquote>
+
+*Any full committer may offer anyone commit access to an 
+experimental branch at any time*. It is not necessary that the 
+experimental branch have a high likelihood of being merged to 
+@trunk@ (although that's always a good goal to aim for).
+
+It's just as important that the full committer -- all the full 
+committers, actually -- view such branches as training grounds for new 
+developers, by giving feedback on the commits. The goal of these branches 
+is both to get new code into Dradis and to get new developers into the 
+project.
