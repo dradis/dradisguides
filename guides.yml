@@ -37,6 +37,17 @@ index:
     - title: "Running Dradis inside Metasploit's Cygwin"
       url: dradis_on_cygwin
       text: "Learn how to run Dradis in your existing Metasploit Cygwin installation."
+  Guides for Developers:
+    - title: "How to become a committer"
+      url: become_committer
+    - title: "Plugin overview"
+      url: plugins_overview
+    - title: "How to create an import plugin"
+      url: plugins_import
+    - title: "How to create an upload plugin [coming soon]"
+      url:
+    - title: "How to create an export plugin [coming soon]"
+      url:
   Contribute:
     - title: "How to contribute to Dradis Guides"
       url: contribute
