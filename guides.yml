@@ -40,7 +40,7 @@ index:
   Guides for Developers:
     - title: "How to become a committer"
       url: become_committer
-    - title: "Plugin overview"
+    - title: "Plugins overview"
       url: plugins_overview
     - title: "How to create an import plugin"
       url: plugins_import
