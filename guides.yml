@@ -44,8 +44,8 @@ index:
       url: plugins_overview
     - title: "How to create an import plugin"
       url: plugins_import
-    - title: "How to create an upload plugin [coming soon]"
-      url:
+    - title: "How to create an upload plugin"
+      url: plugins_upload
     - title: "How to create an export plugin [coming soon]"
       url:
   Contribute:
