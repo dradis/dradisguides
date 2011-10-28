@@ -1,0 +1,365 @@
+h2. Upload Plugins
+
+An *Upload plugin* is a special type of server plugin (see "Plugins Overview":plugins_overview.html for other types).
+
+In this guide you will learn how to create and use new Upload plugins.
+
+Please note that the upload plugin generator was updated as a result of this documentation work. This means that your milage will be slightly different if you are not running the latest version of Dradis from our git repository: "dradis/dradisframework":https://github.com/dradis/dradisframework.
+
+If you are running the latest stable release of Dradis (2.8), you can follow the guide without fear. The only difference would be that certain auto-generated blocks of code will be slightly different. When in doubt go with the code in this guide. 
+
+endprologue.
+
+h3. Introduction
+
+Upload plugins are used to process files created by other tools and extract useful information into your Dradis repository.
+
+You can access the Import plugins through the <code>Import from file...</code> toolbar button.
+
+p{text-align:center;}. <img src="images/plugins_upload/import_from_file.png"
+    class="marquee"
+    width="324" height="209"
+    title=""
+    alt=""/>
+
+We are going to go through the steps to create a new upload plugin for the "OWASP Zed Attack Proxy":https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project.
+
+Creating a plugin for ZAP was a "user-requested feature":http://dradisframework.uservoice.com/forums/38386-general/suggestions/2314108-zap-import-plugin?ref=title and writing an upload plugins guide was in the roadmap for some time, so lets get to it.
+
+h3. Define Plugin Goals
+
+We want to be able to parse ZAP's XML Reports (generated in ZAP through the Report > Generate XML Report... menu).
+
+A quick look at a sample report gives us an idea of the structure of this document:
+
+<xml filename="ZAP_report.xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<report>
+  Report generated at Fri, 28 Oct 2011 11:33:54.
+  <alertitem>
+    <pluginid>40000</pluginid>
+    <alert>Cookie set without HttpOnly flag</alert>
+    <riskcode>1</riskcode>
+    <reliability>2</reliability>
+    <riskdesc>Low (Warning)</riskdesc>
+    <desc>A cookie has been [...]</desc>
+    <uri>http://dradisframework.org/community/index.php</uri>
+    <param>PHPSESSID=ap49e3vjsunvk1saei443r1mr5; path=/</param>
+    <otherinfo/>
+    <uri>http://dradisframework.org/community/index.php</uri>
+    <param>PHPSESSID=ap49e3vjsunvk1saei443r1mr5; expires=Fri, 28-Oct-2011 11:20:31 GMT; path=/</param>
+    <otherinfo/>
+    <uri>http://dradisframework.org/community/</uri>
+    <param>PHPSESSID=1maqvbmdf3h1p6sdb8sunv7v42; path=/</param>
+    <otherinfo/>
+    <uri>http://dradisframework.org/community/index.php</uri>
+    <param>SMFCookie471=a%3A4%3A%7Bi[...]; expires=Fri, 28-Oct-2011 11:20:31 GMT; path=/</param>
+    <otherinfo/>
+    <solution>Ensure that the HttpOnly flag is set for all cookies.
+    </solution>
+    <reference>www.owasp.org/index.php/HttpOnly
+    </reference>
+  </alertitem>
+  <alertitem>
+  <!-- [...] -->
+  </alertitem>
+</report>
+</xml>
+
+Looks simple enough, a root @report@ tag with a nested @alertitem@ for every issue.
+
+h3. Generate the Plugin
+
+The framework comes with a few handy plugin generators that will help you
+getting your plugin kickstarted. Go to the server folder and run:
+
+<shell>
+$ bundle exec rails generate upload_plugin zap
+</shell>
+
+That will generate all the files we are going to need for the plugin.
+
+All the generated code have been put in: <code>./vendor/plugins/zap_upload/</code>.
+
+h3. Create the Test Cases
+
+*TODO*: Add RSpec plugin testing notes.
+
+h3. Plugin Configuration
+
+If you check the @./lib/zap_upload.rb@ you will see the following code:
+<ruby filename="zap_upload.rb">
+# ZapUpload
+
+require 'zap_upload/filters'
+require 'zap_upload/meta'
+
+module ZapUpload
+  class Configuration < Core::Configurator
+    configure :namespace => 'zap_upload'
+
+    # setting :my_setting, :default => 'Something'
+    # setting :another, :default => 'Something Else'
+  end
+end
+
+# This includes the upload plugin module in the Dradis upload plugin repository
+module Plugins
+  module Upload
+    include ZapUpload
+  end
+end
+</ruby>
+
+The plugin generator created a plugin Configuration class and included this
+code to use the framework's configuration storage facility. All the settings
+configured through the Configuration class are accessible via the Configuration
+Manager ("https://localhost:3004/configurations":https://localhost:3004/configurations).
+
+The generator also included this plugin in the framework's Upload plugin collection (@Plugins::Upload@).
+
+We can customize our plugin settings:
+
+<ruby>
+  # [...]
+  module ZapUpload
+    class Configuration < Core::Configurator
+      configure :namespace => 'zap_upload'
+      setting :category, :default => 'ZAP output'
+      setting :author, :default => 'ZAP plugin'
+      setting :parent_node, :default => 'plugin.zap'
+    end
+  end
+  # [...]
+</ruby>
+
+* The *category* defines the note category to which plugin-generated notes will be assigned.
+* The *author* defines who will appear as author of plugin-generated notes.
+* And the *parent_node* is the name of the node that will be created in your repository tree that will be ancestor to all plugin-generated content.
+
+h3. Implement the functionality
+
+Upload filters are defined in @./lib/zap_upload/filters.rb@.
+
+Typically an upload plugin defines a single upload filter. However it is possible to define multiple filters if you need to. For instance, imagine that the next release of ZAP completely changes the report XML format. Instead of overwriting our existing filter to support the new changes, we could create a second filter to support both the old and the new formats. If you want to see sample code of a plugin defining two upload filters the "ProjectManagement":https://github.com/dradis/dradisframework/tree/master/vendor/plugins/project_management provides a neat example.
+
+Each filters is defined inside its own module under @ZapUpload@ with the following structure:
+
+<ruby filename="lib/zap_upload/filters.rb">
+module ZapUpload
+  private
+  @@logger=nil
+
+  public
+
+  # This method will be called by the framework when the user selects your
+  # plugin from the drop down list of the 'Import from file' dialog
+  def self.import(params={})
+    file_content = File.read( params[:file] )
+    @@logger = params.fetch(:logger, Rails.logger)
+
+    # TODO: do something with the contents of the file!
+    # if you want to print out something to the screen or to the uploader
+    # interface use @@logger.info("Your message")
+  end
+end
+</ruby>
+
+This default content is fairly self-explanatory. You will receive two params to your method:
+
+* *:file* is the full path to the file uploaded by the user
+* *:logger* is the logger instance to use to show debug traces
+
+In our case the filter implementation is going to be fairly vanilla, parse the XML contents and then cycle through the report to generate nodes and notes with all the information we want to extract.
+
+**Pro tip**: instead of jumping straight to plugin implementation we are going to do ourselves a favour and create a console task first so we can debug the parsing code using the console instead of the web interface.
+
+h3. Add command line tasks
+
+LEts make our plugin's functionality available through the command line.
+
+This is done by virtue of "Thor":https://github.com/wycats/thor (simple ruby build program with capabilities similar to make/Rake).
+
+This is a good idea also for debugging purposes. Rails plugins do not get reloaded unless you restart the server. So in order for a change in your code to become used by the framework, you need to restart Dradis (which is a slow process). Running your plugin through the console using the <strong>thor</strong> will make debugging easier.
+
+The plugin generator defined a dummy *thor* task in @./tasks/thorfile.rb@:
+
+<ruby>
+class DradisTasks < Thor
+  class Upload < Thor
+    namespace "dradis:upload"
+
+#    desc  "zap FILE", "upload ZAP results"
+#    long_desc "This will appear if the user runs 'thor help dradis:upload:zap'"
+#    def zap(file_path)
+#      require 'config/environment'
+#
+#      logger = Logger.new(STDOUT)
+#      logger.level = Logger::DEBUG
+#
+#      unless File.exists?(file_path)
+#        $stderr.puts "** the file [#{file_path}] does not exist"
+#        exit -1
+#      end
+#
+#      ZapUpload.import(
+#        :file => file_path,
+#        :logger => logger)
+#
+#      logger.close
+#    end
+
+  end
+end
+</ruby>
+
+Uncomment the code and you should be good to go. You should now see your new upload task in the console:
+
+<shell>
+$ bundle exec thor -T | grep upload
+thor dradis:upload:burp FILE              # upload Burp scanner XML output
+thor dradis:upload:nessus FILE            # upload nessus results
+thor dradis:upload:nexpose FILE           # upload NeXpose results
+thor dradis:upload:nikto FILE             # upload nikto results
+thor dradis:upload:nmap FILE              # upload the results of an Nmap scan
+thor dradis:upload:openvas FILE           # upload OpenVAS results
+thor dradis:upload:project:package FILE   # import an entire repository package
+thor dradis:upload:project:template FILE  # create a new repository structure...
+thor dradis:upload:surecheck FILE         # Upload a SureCheck .sc file
+thor dradis:upload:typhon FILE            # upload typhon results
+thor dradis:upload:w3af FILE              # upload w3af results
+thor dradis:upload:wxf FILE               # upload wXf results
+thor dradis:upload:zap FILE               # upload ZAP results
+</shell>
+
+So now, every time you want to test your implementation code you only need to run the Thor task passing as a parameter a path to the ZAP results file:
+
+<shell>
+$ bundle exec thor dradis:upload:zap /tmp/ZAP_report_.xml
+</shell>
+
+Lets work on the implementation next.
+
+h3. The filter implementation
+
+We are going to use the excellent "Nokogiri":http://nokogiri.org/ library for XML parsing.
+
+
+<ruby filename="lib/zap_upload/filters.rb">
+module ZapUpload
+  # [...]
+  def self.import(params={})
+    file_content = File.read( params[:file] )
+    @@logger = params.fetch(:logger, Rails.logger)
+
+    # create the parent node early so we can use it to provide feedback on errors
+    parent = Node.find_or_create_by_label( Configuration.parent_node)
+    # every note we create will be assigned to this author
+    author = Configuration.author
+    # get the note category instance or create it if it does not exist
+    category = Category.find_or_create_by_name( Configuration.category )
+
+    @@logger.info{ 'Parsing ZAP output...' }
+    doc = Nokogiri::XML(file_content)
+    @@logger.info{ 'Done.' }
+
+    # Add a note to the plugin root folder with the file name and report date
+    file_name = File.basename(params[:file])
+    report_date = doc.root.children.first.text
+    parent.notes.create(
+      :author => author,
+      :category => category,
+      :text => "#[Title]#\nZAP upload: #{file_name}\n\n#[Report_date]##{report_date}")
+
+    # Process the report contents
+    doc.xpath('/report/alertitem').each do |alert|
+      alert_name = alert.xpath('alert').text
+      alert_text = alert.elements.collect{ |attribute|
+        "#[#{attribute.name.capitalize}]#\n#{attribute.text}\n\n"
+      }.join("\n")
+
+      @@logger.info{ "Parsing alert item: #{alert_name}" }
+
+      alert_node = parent.children.find_or_create_by_label(alert_name)
+      alert_node.notes.create(
+        :author => author,
+        :category => category,
+        :text => alert_text)
+    end
+  end
+end
+</ruby>
+
+Hopefully the code above is fairly easy to follow. For each @alertitem@ we create a node inside the plugins parent node and add a note to it.
+
+If multiple instances of the same issue are found (i.e. multiple @alertitems@ with the same @pluginid@), the use of *find_or_create_by_label()* ensures that only one child node is create. Subsequent @alertitems@ will just find it and append a new note to it.
+
+As for the note content (i.e. @alert_text@) we are just cycling through all the nested tags in the @alertitem@ and converting them to the Dradis standard note format. For example, the original item shown at the beginning of this guide:
+
+<xml>
+<!-- [...] -->
+<alertitem>
+  <pluginid>40000</pluginid>
+  <alert>Cookie set without HttpOnly flag</alert>
+  <riskcode>1</riskcode>
+  <reliability>2</reliability>
+  <riskdesc>Low (Warning)</riskdesc>
+  <desc>A cookie has been [...]</desc>
+  <uri>http://dradisframework.org/community/index.php</uri>
+  <!-- [...] -->
+</alertitem>
+<!-- [...] -->
+</xml>
+
+Will result in the following note:
+
+<plain>
+#[Pluginid]#
+40000
+
+#[Alert]#
+Cookie set without HttpOnly flag
+
+#[Riskcode]#
+1
+
+#[Reliability]#
+2
+
+#[Riskdesc]#
+Low (Warning)
+
+#[Desc]#
+A cookie has been [...]
+
+#[Uri]#
+http://dradisframework.org/community/index.php
+</plain>
+
+h3. Running the plugin
+
+Lets run the console task to make sure it everything works:
+
+<shell>
+$ bundle exec thor dradis:upload:zap ~/ZAP.xml
+Parsing ZAP output...
+Done.
+Parsing alert item: Cookie set without HttpOnly flag
+Parsing alert item: Password Autocomplete in browser
+Parsing alert item: Cross site scripting
+Parsing alert item: Cross site scripting in SCRIPT section
+</shell>
+
+And the results:
+
+p{text-align:center;}. <img src="images/plugins_upload/result.png"
+  width="995" height="691" class="marquee"
+  alt="A screenshot of the Dradis web interface showing the ZAP Upload plugin in action"/></a>
+</p>
+
+h3. More Information
+
+Upload plugins as any *Dradis* server plugin are just standard Ruby on Rails
+plugins with a specific structure and purpose.
+
+You can learn more about Rails plugins at the "Ruby on Rails plugins guide":http://guides.rubyonrails.org/plugins.html.
