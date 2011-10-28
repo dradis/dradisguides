@@ -117,7 +117,7 @@ If you check the @./lib/osvdb_import.rb@ you will see the following code:
 The plugin generator created a plugin Configuration class and included this
 code to use the framework's configuration storage facility. All the settings
 configured through the Configuration class are accessible via the Configuration
-Manager (https://localhost:3004/configurations).
+Manager ("https://localhost:3004/configurations":https://localhost:3004/configurations).
 
 The generator also included this plugin in the framework's Import plugin collection (@Plugins::Import@).
 
