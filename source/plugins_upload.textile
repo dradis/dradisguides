@@ -71,7 +71,17 @@ Looks simple enough, a root @report@ tag with a nested @alertitem@ for every iss
 h3. Generate the Plugin
 
 The framework comes with a few handy plugin generators that will help you
-getting your plugin kickstarted. Go to the server folder and run:
+getting your plugin kickstarted.
+
+While you develop your plugin, it will be easier to run Dradis in *development mode*, this means that a number of files will be auto-reloaded whenever you change them to make your life easier. You just need to initialize your development database with:
+
+<shell>
+$ bundle exec thor dradis:reset
+</shell>
+
+This should create a <code>./db/development.sqlite3</code> SQLite3 file.
+
+Now we are ready to generate a new plugin and debug it in *development* mode. Go to the server folder and run:
 
 <shell>
 $ bundle exec rails generate upload_plugin zap
