@@ -38,8 +38,10 @@ index:
       url: dradis_on_cygwin
       text: "Learn how to run Dradis in your existing Metasploit Cygwin installation."
   Extending Dradis:
-    - title: "How to become a committer"
-      url: become_committer
+    - title: "Dradis development 101"
+      url: dradis_development_101
+    # - title: "How to become a committer"
+    #   url: become_committer
     - title: "Plugins overview"
       url: plugins_overview
     - title: "How to create an import plugin"

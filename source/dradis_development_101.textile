@@ -1,0 +1,177 @@
+h2. Dradis development 101
+
+This guide covers how to tweak Dradis and extend it to fit your needs.
+
+After reading this guide, you will be able to:
+
+* Understand how Dradis Framework works and how it leverages Ruby on Rails
+* Switch between *development* and *production* modes.
+* How to use the Rails console to query the data in your Dradis repository.
+
+endprologue.
+
+
+h3. Dradis is built on Ruby on Rails
+
+On the server side, Dradis is written in "Ruby":http://www.ruby-lang.org/ using the "Ruby on Rails":http://rubyonrails.org/ framework.
+
+Ruby on Rails is an "MVC framework":http://guides.rubyonrails.org/getting_started.html#what-is-rails used to build web applications. Dradis is just a web application built on Rails that manages a few types of models:
+
+* *Notes*: these are rich-text chunks that we create when using Dradis to manage a project.
+* *Nodes*: to facilitate organizing your notes, they are attached to *nodes*. Apart form notes, nodes can also contain other nodes and thus are organized in a tree structure.
+* *Categories*: each of the notes that is created in the Dradis repository is assigned to a category. For instance a note can be assigned to the _false positive_ category, or the _ready for report_ one.
+
+You can find these under @./app/models/@. You will notice that there are some other files in there, but we will leave those out of this 101 introduction to the framework.
+
+On the client side, we use the "ExtJS 3":http://docs.sencha.com/ext-js/3-4/ JavaScript library to build the familiar _email client_ interface. You will find out that the client-side JavaScript is not for the faint of heart, we will not be covering it in this guide either.
+
+
+h3. Development environment vs Production environment
+
+Every Rails application can run in a few different environments. Typically these are: development, testing and production.
+
+* In *development* all ruby files are reloaded with every request, this means that you can make a change to a ruby file, refresh the browser and you will see the change take effect immediately without having to restart.
+* The *test* environment is only used when running Dradis test suites (not covered in this guide).
+* When the application is run in *production* mode ruby classes are not reloaded. Caching is enabled and a few other changes are in place to maximize the speed and responsiveness of the application.
+
+When we ship Dradis as a downloadable archive, we take steps to ensure our users run in *Production* mode. This is the fastest mode and makes for the best user experience.
+
+However, when you are tweaking Dradis or extending it with your own functionality, it is best to work in *Development* mode to avoid having to restart the application every time you make a change.
+
+Each of the three environments (development, test and production) has its own database associated to it. Database configuration for all the environments can be found in:
+
+<shell>
+./config/database.yml
+</shell>
+
+
+h3. Prerequisites: Ruby and Git
+
+If you are going to extend Dradis in any way, you will need two basic tools: Ruby and Git.
+
+Use your distro's package manager to install the latest version of git (e.g. @apt-get install git@).
+
+To get Ruby up and running we are going to use "Ruby Version Manager":http://beginrescueend.com/.
+
+Before we start let me recommend you stick to Linux/MacOS for development. It can be done in Windows, but the development experience with git/ruby/rails is usually nicer in *NIX based systems.
+
+Without further ado, lets get the Ruby environment we need.
+
+h4. RVM and Ruby 1.9.3
+
+We are going to install Ruby 1.9.3 using "RVM":http://beginrescueend.com/. This has the benefit of keeping everything under your `~/.rvm/` folder:
+
+<shell>
+etd@host:~$ bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+etd@host:~$ source ~/.profile
+etd@host:~$ rvm -v
+</shell>
+
+Once RVM is up and running we need to get a couple of libraries that will be required by the Ruby installation:
+
+<shell>
+etd@host:~$ for package in zlib openssl libxslt libxml2; do rvm pkg install $package; done
+</shell>
+
+And finally the Ruby 1.9.3 runtime:
+
+<shell>
+etd@host:~$ rvm install 1.9.3
+etd@host:~$ rvm 1.9.3 --default
+etd@host:~$ ruby -v
+</shell>
+
+There is an additional step that it's not required but that will shorten the time required to install ruby gems:
+
+<shell>
+etd@host:~$ echo "gem: --no-rdoc --no-ri" > ~/.gemrc
+</shell>
+
+This tells RubyGems to not generate documentation for every library it installs.
+
+Finally, we just need to install the "Bundler":http://gembundler.com/ gem, all other Ruby gems will be installed using Bundler:
+
+<shell>
+etd@host:~$ gem install bundler
+etd@host:~$ bundle -v
+</shell>
+
+
+h3. Getting Dradis source
+
+Dradis source is hosted in GitHub: "github.com/dradis/dradisframework":https://github.com/dradis/dradisframework
+
+Lets get a local copy:
+
+<shell>
+etd@host:~$ git clone https://github.com/dradis/dradisframework.git dradis-git
+</shell>
+
+You just downloaded the full source of the framework. If you are not familiar with git you can checkout the "Working with git":https://github.com/dradis/dradisframework/wiki/Working-with-git wiki page.
+
+Don't worry, you don't need to be a git guru to extend and tweak Dradis. In fact, you don't need to use git at all from now own.
+
+The code you just downloaded will run in *development* mode by default (which is what we want right now).
+
+
+h3. Bundler and Ruby dependencies
+
+Dradis is a feature rich application that uses a number of external libraries. These external libraries are packaged in what are called _ruby gems_. You can see a list of all the required _gems_ in the @Gemfile@ file.
+
+But don't worry, we don't need to install all these gems by hand. "Bundler":http://gembundler.com/ will help us do it.
+
+Bundler finds and install the required dependencies, and once they are installed it manages the different executables that come those libraries so you can access them easily.
+
+First, get all those dependencies installed:
+
+<shell>
+etd@host:~$ cd dradis-git/
+etd@host:~/dradis-git$ bundle install
+</shell>
+
+You can check that now all dependencies have been installed:
+
+<shell>
+etd@host:~/dradis-git$ bundle check
+The Gemfile's dependencies are satisfied
+</shell>
+
+To run a command inside the *bundler* context (this means in a context where all those dependencies have been preloaded) you use:
+
+<shell>
+etd@host:~/dradis-git$ bundle exec [cmd_name]
+</shell>
+
+
+h3. Thor tasks
+
+Now that you have a copy of the Dradis source, it's time to introduce you to "Thor":https://github.com/wycats/thor. Thor is a simple and efficient tool for building self-documenting command line utilities.
+
+We have used Thor to provide a command line interface to some of Dradis features you can see the available Thor tasks with:
+
+<shell>
+etd@host:~/dradis-git$ bundle exec thor -T
+</shell>
+
+The first task we need to run will help us to complete the setup of our development environment:
+
+<shell>
+etd@host:~/dradis-git$ bundle exec thor dradis:reset
+</shell>
+
+Once that's done, you can verify everything works by firing up Dradis:
+
+<shell>
+etd@host:~/dradis-git$ bundle exec rails server
+</shell>
+
+If you can browse to "https://127.0.0.1:3004/":https://127.0.0.1:3004/ you are good to go.
+
+h3. The Rails console
+
+N/A yet
+
+
+h3. What next?
+
+N/A yet
