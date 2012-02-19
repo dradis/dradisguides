@@ -14,123 +14,132 @@ If the latter going for 10 GB of disk and 2 GB of RAM should do the trick. You c
 
 A tutorial on how to install the base OS falls out of the scope of this guide, we will leave you a few minutes to get your new OS up and running.
 
+
+h3. Prerequisites: *curl* and *git*
+
+Before we begin, there are a couple of packages that we will need:
+
+<shell>
+etd@host:~$ sudo apt-get install curl git
+</shell>
+
+
+h3. Installing Ruby 1.9.3
+
+We are going to install Ruby 1.9.3 using "RVM":http://beginrescueend.com/. This has the benefit of keeping everything under your `~/.rvm/` folder:
+
+<shell>
+etd@host:~$ bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+etd@host:~$ source ~/.profile
+etd@host:~$ rvm -v
+</shell>
+
+Once RVM is up and running we need to get a couple of libraries that will be required by the Ruby installation:
+
+<shell>
+etd@host:~$ for package in zlib openssl libxslt libxml2; do rvm pkg install $package; done
+</shell>
+
+And finally the Ruby 1.9.3 runtime:
+
+<shell>
+etd@host:~$ rvm install 1.9.3
+etd@host:~$ rvm 1.9.3 --default
+etd@host:~$ ruby -v
+</shell>
+
+There is an additional step that it's not required but that will shorten the time required to install ruby gems:
+
+<shell>
+etd@host:~$ echo "gem: --no-rdoc --no-ri" > ~/.gemrc
+</shell>
+
+This tells RubyGems to not generate documentation for every library it installs.
+
+Finally, we just need to install the "Bundler":http://gembundler.com/ gem, all other Ruby gems will be installed using Bundler:
+
+<shell>
+etd@host:~$ gem install bundler
+etd@host:~$ bundle -v
+</shell>
+
+
 h3. Download Dradis
 
-We are going to download Dradis and let the built-in *verify.sh* guide us through the steps required to complete the setup.
-
-Lets create a folder in our home:
+We are going to work with the Git version of Dradis which is stable but contains the latest and greatest features:
 
 <shell>
-etd@host:~$ cd
-etd@host:~$ mkdir dradis
-etd@host:~$ cd dradis
+etd@host:~$ mkdir dradis-git
+etd@host:~$ cd dradis-git/
+etd@host:~/dradis-git$ git clone https://github.com/dradis/dradisframework.git server
+etd@host:~/dradis-git$ for file in verify reset start; do curl -O https://raw.github.com/dradis/meta/master/$file.sh; done
+etd@host:~/dradis-git$ chmod +x *.sh
 </shell>
 
-First download the .tar.bz2 from the downloads page:
-
-"http://dradisframework.org/download.html":http://dradisframework.org/download.html
-
-And uncompress (say the latest version is vX.Y.Z):
+To make sure it everything is as it should, double check the contents of the directory:
 
 <shell>
-etd@host:~/dradis$ tar -xvvjf dradis-vX.Y.Z.tar.bz2
+etd@host:~/dradis-git$ ls -l
+total 32
+-rwxr-xr-x   1 etd  staff   847 Feb 19 14:26 reset.sh*
+drwxr-xr-x  26 etd  staff   884 Feb 19 14:02 server/
+-rwxr-xr-x   1 etd  staff   407 Feb 19 14:26 start.sh*
+-rwxr-xr-x   1 etd  staff  6775 Feb 19 14:26 verify.sh*
 </shell>
 
-After everything is extracted move to the dradis-X.Y folder and verify all the dependencies:
+We are going to create a _gemset_ to store all the Ruby gems that Dradis requires in a self-contained package. This means that the libraries won't affect any other apps you have installed. Also if you decide to remove Dradis, you can delete this _gemset_ and cleanup the system.
+
+To activate the _gemset_ just enter the `server/` directory and answer **yes** when RVM asks:
 
 <shell>
-etd@host:~/dradis$ cd dradis-X.Y/
-etd@host:~/dradis/dradis-X.Y$ ./verify.sh
+etd@host:~/dradis-git$ cd server/
+Do you wish to trust this .rvmrc file? (/home/etd/dradis-git/server/.rvmrc)
+y[es], n[o], v[iew], c[ancel]> y
+Using /Users/etd/.rvm/gems/ruby-1.9.3-p125 with gemset dradis
+etd@host:~/dradis-git/server$ cd ..
 </shell>
 
-As you can see, there are a few missing dependencies, we will get them installed.
+Once you have your copy of the repo, we need to install a few Ruby dependencies:
 
 
-h3. Install dependencies
-
-First we need a working installation of Ruby:
-
-<shell>
-$ sudo apt-get install ruby irb rdoc ruby-dev libopenssl-ruby 
-</shell>
-
-Next time you run *./verify.sh* you'll learn you need RubyGems too. 
-
-Since we are going to use SQLite3 as our backend database (others can be configured) and XML we are going to skip a few runs of *./verify.sh* and install some packages directly:
-
-<shell>
-$ sudo apt-get install rubygems libsqlite3-0 libsqlite3-dev libxml2-dev libxslt1-dev
-</shell>
-
-Next time we run *./verify.sh* it will ask us to install some Ruby gems. Lets do that:
-
-<shell>
-$ sudo gem install bundler sqlite3-ruby
-</shell>
-
-A final run of *./verify.sh* should confirm that we have installed all the required prerequisites:
-
-<shell>
-etd@host:~/dradis/dradis-X.Y$ ./verify.sh
-
-Looking for Ruby interpreter... found [ /usr/bin/ruby ].
-Checking for support to compile native extensions... found.
-Looking for RubyGems and the 'gem' command... found [ /usr/bin/gem ].
-Looking for the Ruby Bundler gem [bundler]... found [ v1.0.15 ].
-Looking for the Ruby Bundler binary...
-** locating using the PATH variable... NOT found
-** locating using RubyGems... found [ /var/lib/gems/1.8/bin/bundle ].
-Looking for the SQLite3 libraries... found.
-Looking for the SQLite3 ruby gem [sqlite3-ruby]... found [ v1.3.4 ].
-
-</shell>
-
-One last step, not required but nice to have is to include the gem's @bin/@ direactory in your @$PATH@.
-
-If you ever install a Ruby gem that ships with a binary (like Bundler or Rails), copies of those binaries will be placed in the @bin/@ directory of RubyGems. If you want to have this commands readily available, you can add this at the bottom of your *~/.bashrc* file:
-
-<shell>
-export PATH=/var/lib/gems/1.8/bin/:$PATH
-</shell>
-
-And reload the changes with:
-
-<shell>
-$ source ~/.bashrc
-</shell>
-
-Or just open a new terminal and the changes will be reloaded automatically.
-
-h3. Running Dradis
+h3. Preparing Dradis
 
 Before you can start the server you need to run *./reset.sh* this will prepare the config files for first use and will re-generate the repository database. 
 
 <shell>
-etd@host:~/dradis/dradis-X.Y$ ./reset.sh
+etd@host:~/dradis/dradis-git$ ./reset.sh
+Some Ruby gems are missing, do you want to install them now? [y] y
 </shell>
 
-If some of the required Ruby libraries are not installed, this script will show the list of them. You can go ahead and answer *y* to let the script run Bundler or you can run Bundler yourself:
+This will install the libraries that are required to run Dradis. Once that's is done, we need to run the script again:
 
 <shell>
-etd@host:~/dradis/dradis-X.Y$ cd server/
-etd@host:~/dradis/dradis-X.Y/server$ bundle install
+etd@host:~/dradis/dradis-git$ ./reset.sh
+The config file [config/database.yml.template] was found not to be ready to use.
+Do you want to initialize it? [y]es | [N]o | initialize [a]ll
+a
 </shell>
 
-Note that if you didn't add the RubyGems @bin/@ directory to your path you will have to use Bundler's full path: */var/lib/gems/1.8/bin/bundle*
+If you ever want to clear your repository (e.g. a new project begins), re-runing the command above will do the trick.
 
-After your _bundle_  is installed (the list of gem dependencies), you can run *./reset.sh* to actually reset the environment:
+The final step is to make sure all the assets (i.e. images, JavaScripts, CSS, etc.) that Dradis needs are precompiled to ensure they load at maximum speed:
 
 <shell>
-etd@host:~/dradis/dradis-X.Y$ ./reset.sh
+etd@host:~/dradis/dradis-git$ cd server/
+etd@host:~/dradis/dradis-git/server$ RAILS_ENV=production bundle exec rake assets:precompile
+etd@host:~/dradis/dradis-git/server$ cd ../
 </shell>
 
-If you ever want to clear your repository (e.g. a new project begins), re-runing *./reset.sh* will do the trick.
+
+h3. Running Dradis
 
 Once everything is ready, you can run the server with:
 
 <shell>
-etd@host:~/dradis/dradis-X.Y$ ./start.sh
+etd@host:~/dradis/dradis-git$ ./start.sh
 </shell>
+
+You are ready to browse: "https://127.0.0.1:3004/":https://127.0.0.1:3004/
 
 The script also accepts the *-h* flag to help you with additional arguments to customize the binding address and port number.
 
