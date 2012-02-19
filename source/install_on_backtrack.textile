@@ -8,60 +8,146 @@ Please note that eventually we will fine tune the process of pushing the latest 
 
 endprologue.
 
-h3. Clone the Dradis Framework repository
+h3. Installing Ruby 1.9.3
 
-Dradis is open-source and is hosted on GitHub: "github.com/dradis/dradisframework":https://github.com/dradis/dradisframework/ we are going to clone the repository to make sure we benefit of the latest features.
+We are going to install Ruby 1.9.3 using "RVM":http://beginrescueend.com/. This has the benefit of keeping everything under your `~/.rvm/` folder:
+
+<shell>
+root@root:~# bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+root@root:~# source /etc/profile.d/rvm.sh
+root@root:~# rvm -v
+</shell>
+
+Once RVM is up and running we need to get a couple of libraries that will be required by the Ruby installation:
+
+<shell>
+etd@host:~$ for package in zlib openssl libxslt libxml2; do rvm pkg install $package; done
+</shell>
+
+And finally the Ruby 1.9.3 runtime:
+
+<shell>
+root@root:~# rvm install 1.9.3
+root@root:~# rvm 1.9.3 --default
+root@root:~# ruby -v
+</shell>
+
+There is an additional step that it's not required but that will shorten the time required to install ruby gems:
+
+<shell>
+root@root:~# echo "gem: --no-rdoc --no-ri" > ~/.gemrc
+</shell>
+
+This tells RubyGems to not generate documentation for every library it installs.
+
+Finally, we just need to install the "Bundler":http://gembundler.com/ gem, all other Ruby gems will be installed using Bundler:
+
+<shell>
+root@root:~# gem install bundler
+root@root:~# bundle -v
+</shell>
+
+
+h3. Download Dradis
+
+We are going to work with the Git version of Dradis which is stable but contains the latest and greatest features:
 
 <shell>
 root@root:~# cd /pentest/misc/
 root@root:/pentest/misc# mkdir dradis-git && cd dradis-git
 root@root:/pentest/misc/dradis-git# git clone https://github.com/dradis/dradisframework.git server
-</shell>
-
-h3. Get the helper scripts
-
-Dradis comes with a bunch of helper scripts to help you start and reset the environment. We need to grab a copy of those:
-
-<shell>
-root@root:/pentest/misc/dradis-git# wget https://raw.github.com/dradis/meta/master/verify.sh
-root@root:/pentest/misc/dradis-git# wget https://raw.github.com/dradis/meta/master/reset.sh
-root@root:/pentest/misc/dradis-git# wget https://raw.github.com/dradis/meta/master/start.sh
-root@root:/pentest/misc/dradis-git# wget https://raw.github.com/dradis/meta/master/LICENSE
+root@root:/pentest/misc/dradis-git# for file in verify reset start; do curl -O https://raw.github.com/dradis/meta/master/$file.sh; done
 root@root:/pentest/misc/dradis-git# chmod +x *.sh
 </shell>
 
-The latest BackTrack comes with all the required libraries pre-installed, but you can double-check with:
+To make sure it everything is as it should, double check the contents of the directory:
+
 <shell>
-root@root:/pentest/misc/dradis-git# ./verify.sh
+root@root:/pentest/misc/dradis-git# ls -l
+total 32
+-rwxr-xr-x   1 etd  staff   847 Feb 19 14:26 reset.sh*
+drwxr-xr-x  26 etd  staff   884 Feb 19 14:02 server/
+-rwxr-xr-x   1 etd  staff   407 Feb 19 14:26 start.sh*
+-rwxr-xr-x   1 etd  staff  6775 Feb 19 14:26 verify.sh*
 </shell>
 
-It should give you an _all green_ status. We just need a few Ruby gems (i.e. libraries) that we can get with:
+We are going to create a _gemset_ to store all the Ruby gems that Dradis requires in a self-contained package. This means that the libraries won't affect any other apps you have installed. Also if you decide to remove Dradis, you can delete this _gemset_ and cleanup the system.
+
+To activate the _gemset_ just enter the `server/` directory and answer **yes** when RVM asks:
 
 <shell>
-root@root:/pentest/misc/dradis-git# cd server && bundle install 
+root@root:/pentest/misc/dradis-git# cd server/
+Do you wish to trust this .rvmrc file? (/pentest/misc/dradis-git/server/.rvmrc)
+y[es], n[o], v[iew], c[ancel]> y
+Using /root/.rvm/gems/ruby-1.9.3-p125 with gemset dradis
+root@root:/pentest/misc/dradis-git# cd ..
 </shell>
 
-Before we are done we need a minor patch to the code (it will eventually be added to the repo). 
+Once you have your copy of the repo, we need to install a few Ruby dependencies:
 
-Comment line #13 of [dradis-git]/server/config/environments/production.rb:
 
-<ruby>
-  
-  # Specifies the header that your server uses for sending files
-  # config.action_dispatch.x_sendfile_header = "X-Sendfile"
+h3. Preparing Dradis
 
-</ruby>
+Before you can start the server you need to run *./reset.sh* this will prepare the config files for first use and will re-generate the repository database. 
 
-That's all done now, just reset the environment and start the server:
+However, since in BackTrack you typically run as the *root* user, there is a tweak that you have to apply to the `reset.sh` and `start.sh` scripts. 
+
+We will start with `reset.sh`. Replace the RVM load line (around #13) from:
+
 <shell>
-root@root:/pentest/misc/dradis-git/server# cd ..
-root@root:/pentest/misc/dradis-git# ./reset.sh # Initialize the config
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+</shell>
+
+to
+
+<shell>
+[[ -s /etc/profile.d/rvm.sh ]] && . /etc/profile.d/rvm.sh
+</shell>
+
+Repeat for `start.sh`. And that's it:
+
+<shell>
+root@root:/pentest/misc/dradis-git# ./reset.sh
+Some Ruby gems are missing, do you want to install them now? [y] y
+</shell>
+
+This will install the libraries that are required to run Dradis. Once that's is done, we need to run the script again:
+
+<shell>
+root@root:/pentest/misc/dradis-git# ./reset.sh
+The config file [config/database.yml.template] was found not to be ready to use.
+Do you want to initialize it? [y]es | [N]o | initialize [a]ll
+a
+</shell>
+
+If you ever want to clear your repository (e.g. a new project begins), re-runing the command above will do the trick.
+
+The final step is to make sure all the assets (i.e. images, JavaScripts, CSS, etc.) that Dradis needs are precompiled to ensure they load at maximum speed:
+
+<shell>
+root@root:/pentest/misc/dradis-git# cd server/
+root@root:/pentest/misc/dradis-git/server# RAILS_ENV=production bundle exec rake assets:precompile
+root@root:/pentest/misc/dradis-git/server# cd ../
+</shell>
+
+
+h3. Running Dradis
+
+Once everything is ready, you can run the server with:
+
+<shell>
 root@root:/pentest/misc/dradis-git# ./start.sh
 </shell>
 
-All done now, enjoy your server at *https://127.0.0.1:3004*.
+You are ready to browse: "https://127.0.0.1:3004/":https://127.0.0.1:3004/
 
-The `start.sh` script also accepts the *-h* flag to help you with additional arguments to customize the binding address and port number.
+The script also accepts the *-h* flag to help you with additional arguments to customize the binding address and port number.
+
+For instance to bind to port 443 and listen in all interfaces you can run:
+
+<shell>
+root@root:/pentest/misc/dradis-git# ./start.sh -b 0.0.0.0 -p 443
+</shell>
 
 
 h3. Updating Dradis
