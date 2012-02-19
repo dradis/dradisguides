@@ -76,14 +76,14 @@ h3. Preparing Dradis
 Before you can start the server you need to run *./reset.sh* this will prepare the config files for first use and will re-generate the repository database. 
 
 <shell>
-etd@host:~/dradis/dradis-git$ ./reset.sh
+etd@host:~/dradis-git$ ./reset.sh
 Some Ruby gems are missing, do you want to install them now? [y] y
 </shell>
 
 This will install the libraries that are required to run Dradis. Once that's is done, we need to run the script again:
 
 <shell>
-etd@host:~/dradis/dradis-git$ ./reset.sh
+etd@host:~/dradis-git$ ./reset.sh
 The config file [config/database.yml.template] was found not to be ready to use.
 Do you want to initialize it? [y]es | [N]o | initialize [a]ll
 a
@@ -94,9 +94,9 @@ If you ever want to clear your repository (e.g. a new project begins), re-runing
 The final step is to make sure all the assets (i.e. images, JavaScripts, CSS, etc.) that Dradis needs are precompiled to ensure they load at maximum speed:
 
 <shell>
-etd@host:~/dradis/dradis-git$ cd server/
-etd@host:~/dradis/dradis-git/server$ RAILS_ENV=production bundle exec rake assets:precompile
-etd@host:~/dradis/dradis-git/server$ cd ../
+etd@host:~/dradis-git$ cd server/
+etd@host:~/dradis-git/server$ RAILS_ENV=production bundle exec rake assets:precompile
+etd@host:~/dradis-git/server$ cd ../
 </shell>
 
 
@@ -105,10 +105,15 @@ h3. Running Dradis
 Once everything is ready, you can run the server with:
 
 <shell>
-etd@host:~/dradis/dradis-git$ ./start.sh
+etd@host:~/dradis-git$ ./start.sh
 </shell>
 
 You are ready to browse: "https://127.0.0.1:3004/":https://127.0.0.1:3004/
 
 The script also accepts the *-h* flag to help you with additional arguments to customize the binding address and port number.
 
+For instance to bind to port 443 and listen in all interfaces you can run:
+
+<shell>
+etd@host:~/dradis-git# ./start.sh -b 0.0.0.0 -p 443
+</shell>
