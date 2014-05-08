@@ -13,7 +13,7 @@ h3. Installing Ruby 1.9.3
 We are going to install Ruby 1.9.3 using "RVM":http://beginrescueend.com/. This has the benefit of keeping everything under your `~/.rvm/` folder:
 
 <shell>
-root@root:~# bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+root@root:~# bash -s stable < <(curl -s https://raw.githubusercontent.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
 root@root:~# source /etc/profile.d/rvm.sh
 root@root:~# rvm -v
 </shell>
@@ -56,7 +56,7 @@ We are going to work with the Git version of Dradis which is stable but contains
 root@root:~# cd /pentest/misc/
 root@root:/pentest/misc# mkdir dradis-git && cd dradis-git
 root@root:/pentest/misc/dradis-git# git clone https://github.com/dradis/dradisframework.git server
-root@root:/pentest/misc/dradis-git# for file in verify reset start; do curl -O https://raw.github.com/dradis/meta/master/$file.sh; done
+root@root:/pentest/misc/dradis-git# for file in verify reset start; do curl -O https://raw.githubusercontent.com/dradis/meta/master/$file.sh; done
 root@root:/pentest/misc/dradis-git# chmod +x *.sh
 </shell>
 
@@ -88,9 +88,9 @@ Once you have your copy of the repo, we need to install a few Ruby dependencies:
 
 h3. Preparing Dradis
 
-Before you can start the server you need to run *./reset.sh* this will prepare the config files for first use and will re-generate the repository database. 
+Before you can start the server you need to run *./reset.sh* this will prepare the config files for first use and will re-generate the repository database.
 
-However, since in BackTrack you typically run as the *root* user, there is a tweak that you have to apply to the `reset.sh` and `start.sh` scripts. 
+However, since in BackTrack you typically run as the *root* user, there is a tweak that you have to apply to the `reset.sh` and `start.sh` scripts.
 
 We will start with `reset.sh`. Replace the RVM load line (around #13) from:
 

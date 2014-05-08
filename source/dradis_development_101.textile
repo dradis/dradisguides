@@ -62,7 +62,7 @@ h4. RVM and Ruby 1.9.3
 We are going to install Ruby 1.9.3 using "RVM":http://beginrescueend.com/. This has the benefit of keeping everything under your `~/.rvm/` folder:
 
 <shell>
-etd@host:~$ bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+etd@host:~$ bash -s stable < <(curl -s https://raw.githubusercontent.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
 etd@host:~$ source ~/.profile
 etd@host:~$ rvm -v
 </shell>
