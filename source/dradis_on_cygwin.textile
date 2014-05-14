@@ -11,7 +11,7 @@ If you already have <a href="http://www.metasploit.com">Metasploit</a> installed
 
 h3. Install the current development branch
 
-For this tutorial, we are going to use the latest version from Dradis' <a href="https://github.com/dradis/dradisframework">git</a> repository. 
+For this tutorial, we are going to use the latest version from Dradis' <a href="https://github.com/dradis/dradisframework">git</a> repository.
 
 Metasploit's Cygwin environment already comes with all the dependencies needed to run Dradis, so getting it up and running will be very easy.
 
@@ -27,9 +27,9 @@ $ git clone https://github.com/dradis/dradisframework.git server<br/>
 Then download the verify, reset and start scripts to your dradis-git/ folder:
 
 <blockquote>
-$ wget https://raw.github.com/dradis/meta/master/verify.sh<br/>
-$ wget https://raw.github.com/dradis/meta/master/reset.sh<br/>
-$ wget https://raw.github.com/dradis/meta/master/start.sh<br/>
+$ wget https://raw.githubusercontent.com/dradis/meta/master/verify.sh<br/>
+$ wget https://raw.githubusercontent.com/dradis/meta/master/reset.sh<br/>
+$ wget https://raw.githubusercontent.com/dradis/meta/master/start.sh<br/>
 $ chmod +x *.sh<br/>
 $ ./verify.sh<br/>
 // follow instructions / install dependencies<br/>
@@ -50,6 +50,6 @@ If instead of the latest development <code>master</code> you would rather use on
 
 <blockquote>
 $ ./verify.sh<br/>
-$ ./reset.sh<br/> 
+$ ./reset.sh<br/>
 $ ./start.sh
 </blockquote>

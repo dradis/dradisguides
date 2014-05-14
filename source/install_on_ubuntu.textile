@@ -29,7 +29,7 @@ h3. Installing Ruby 1.9.3
 We are going to install Ruby 1.9.3 using "RVM":http://beginrescueend.com/. This has the benefit of keeping everything under your `~/.rvm/` folder:
 
 <shell>
-etd@host:~$ bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+etd@host:~$ bash -s stable < <(curl -s https://raw.githubusercontent.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
 etd@host:~$ source ~/.profile
 etd@host:~$ rvm -v
 </shell>
@@ -72,7 +72,7 @@ We are going to work with the Git version of Dradis which is stable but contains
 etd@host:~$ mkdir dradis-git
 etd@host:~$ cd dradis-git/
 etd@host:~/dradis-git$ git clone https://github.com/dradis/dradisframework.git server
-etd@host:~/dradis-git$ for file in verify reset start; do curl -O https://raw.github.com/dradis/meta/master/$file.sh; done
+etd@host:~/dradis-git$ for file in verify reset start; do curl -O https://raw.githubusercontent.com/dradis/meta/master/$file.sh; done
 etd@host:~/dradis-git$ chmod +x *.sh
 </shell>
 
@@ -104,7 +104,7 @@ Once you have your copy of the repo, we need to install a few Ruby dependencies:
 
 h3. Preparing Dradis
 
-Before you can start the server you need to run *./reset.sh* this will prepare the config files for first use and will re-generate the repository database. 
+Before you can start the server you need to run *./reset.sh* this will prepare the config files for first use and will re-generate the repository database.
 
 <shell>
 etd@host:~/dradis-git$ ./reset.sh
